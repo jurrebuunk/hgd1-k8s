@@ -1,0 +1,16 @@
+# Test database for plan step 4 (failover and restore); removed afterwards.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pg-test
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: pg-test-db
+  namespace: pg-test
+spec:
+  instances: 2
+  storage: { size: 1Gi }
+  bootstrap:
+    initdb: { database: app, owner: app }
