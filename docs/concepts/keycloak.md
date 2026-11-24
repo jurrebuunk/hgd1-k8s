@@ -53,7 +53,7 @@ keycloak-config-cli with `$(env:…)`; the app repo has the same value.
 
 | App | Client | Roles → groups |
 | --- | --- | --- |
-| Cloudreve | `cloudreve` | `admins` → `admin`; `family`, `friends` → `user`; no role, no access |
+| Cloudreve | `cloudreve` | `admins` → `cloudreve-admin` (Cloudreve's Admin group, not a Keycloak admin); `family`, `friends` → `cloudreve-user`; no role, no access |
 
 Cloudreve's OIDC login is a Pro feature upstream; hgd1-cloudreve adds it with
 a patch to the open-source version (its README: *Login through Keycloak*).

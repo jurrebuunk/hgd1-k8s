@@ -19,20 +19,21 @@ passwordPolicy: "length(12) and notUsername and notEmail"
 groups:
   - name: admins
     clientRoles:
-      cloudreve: [admin]
+      cloudreve: [cloudreve-admin]
   - name: family
     clientRoles:
-      cloudreve: [user]
+      cloudreve: [cloudreve-user]
   - name: friends
     clientRoles:
-      cloudreve: [user]
+      cloudreve: [cloudreve-user]
 roles:
   client:
     cloudreve:
-      - name: admin
-        description: Cloudreve administrator (group Admin)
-      - name: user
-        description: Cloudreve user (group User)
+      # Named after the app so a role mapping reads as what it grants.
+      - name: cloudreve-admin
+        description: Administrator in Cloudreve (Cloudreve group Admin), not in Keycloak
+      - name: cloudreve-user
+        description: User in Cloudreve (Cloudreve group User)
 clients:
   # Cloudreve (https://cloudreve.buunk.org, repo hgd1-cloudreve): login
   # through its OIDC patch. The roles go into the ID token as "roles"; a
