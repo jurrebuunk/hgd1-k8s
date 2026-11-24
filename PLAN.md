@@ -84,9 +84,19 @@ Each step ends with something to check.
 
 - [ ] The operator, and one template: 3 instances, one per zone, on
       `local-path`.
-- [ ] Backups: CloudNativePG sends every change and a daily full copy to the
-      bucket `pg-backups` (user and bucket made once with `labctl s3`; the
-      key sops-encrypted here).
+- [ ] Backups to the bucket `pg-backups` (user and bucket made once with
+      `labctl s3`; the key sops-encrypted here), set in the template:
+
+    | Setting | Value | Why |
+    | --- | --- | --- |
+    | WAL upload (`archive_timeout`) | 5 min (15 min if fewer uploads matter more) | At most that much lost; an idle database uploads nothing |
+    | Compression | zstd | Less written to S3 |
+    | Full copy | weekly | The continuous WAL covers the days between |
+    | Retention | 14 days | Old backups are deleted automatically |
+
+- [ ] Wear: the S3 side is cheap (Ceph's HDDs spin all the time anyway and
+      don't wear from writes); Postgres itself writes to the NVMe of three
+      hosts. Watch `labctl disk list` (WEAR) once databases run.
 - [ ] Done when: a test database survives deleting its primary, and a new
       cluster restores from the S3 backup.
 
