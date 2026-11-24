@@ -37,10 +37,9 @@ spec:
   install: { remediation: { retries: 3 } }
   upgrade: { remediation: { retries: 3 } }
   values:
-    prometheusScrape: true
-    # vmagent's service-endpoints job only keeps targets whose port matches
-    # this annotation.
-    service: { annotations: { prometheus.io/port: "8080" } }
+    # Scraped by its own job in vmagent (honor_labels: its namespace and pod
+    # labels describe other objects), not through the annotation.
+    prometheusScrape: false
     resources: { requests: { cpu: 10m, memory: 48Mi } }
 ---
 # Scrapes kubelets, cAdvisor and every pod or service annotated with
@@ -62,6 +61,11 @@ spec:
       - url: http://10.10.30.11:8428/api/v1/write
       - url: http://10.10.30.12:8428/api/v1/write
       - url: http://10.10.30.13:8428/api/v1/write
+    extraScrapeConfigs:
+      - job_name: kube-state-metrics
+        honor_labels: true
+        static_configs:
+          - targets: [kube-state-metrics.monitoring.svc.cluster.local:8080]
     extraArgs:
       envflag.enable: true
       envflag.prefix: VM_
