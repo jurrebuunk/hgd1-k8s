@@ -11,6 +11,9 @@ ingress:
     service: http_status:404
   - hostname: auth.buunk.org
     service: http://keycloak-service.keycloak.svc.cluster.local:8080
+  # Cloudreve (hgd1-cloudreve): the web app, its own accounts.
+  - hostname: cloudreve.buunk.org
+    service: http://cloudreve.cloudreve.svc.cluster.local:80
   # Cloudreve's bucket for browsers (signed links), through its gateway
   # (hgd1-cloudreve: only the bucket cloudreve, Host kept). 404 here for
   # anything outside the bucket as well.
