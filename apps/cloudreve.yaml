@@ -1,4 +1,4 @@
-# Cloudreve (https://files.buunk.org), deployed from its own repo. Flux adds
+# Cloudreve (https://cloudreve.buunk.org), deployed from its own repo. Flux adds
 # this repo's components/ to it, for the Postgres defaults.
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository

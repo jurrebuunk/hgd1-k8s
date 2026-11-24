@@ -201,20 +201,23 @@ is managed in the admin console.
 
 ### 7. Cloudreve, the first public app
 
-- [ ] Cloudreve at `files.buunk.org` (name to confirm) through the tunnel.
-- [ ] Database on a Postgres from the template.
-- [ ] Files in an S3 bucket of its own (`labctl s3 user create cloudreve`,
-      `labctl s3 bucket create cloudreve --owner cloudreve`), key
-      sops-encrypted.
-- [ ] Login through Keycloak (OIDC client `cloudreve`).
-- [ ] The S3 endpoint is internal only, so uploads and downloads go through
-      Cloudreve (its proxy/relay setting), never straight from the browser to
-      `s3.lan.buunk.org`. To check: Cloudreve's S3 policy and OIDC settings
-      in the version I deploy.
-- [ ] Its manifests in an app repo (or `apps/cloudreve/` to start), deployed
-      by Flux.
-- [ ] Done when: from outside the network I log in with Keycloak, upload a
-      file, and see it in `labctl s3 bucket show cloudreve`.
+Lives in its own repo, [hgd1-cloudreve](https://github.com/jurrebuunk/hgd1-cloudreve);
+`apps/cloudreve.yaml` points Flux at it. Apps never go in this repo.
+
+- [x] Cloudreve at `cloudreve.buunk.org` through the tunnel.
+- [x] Database `cloudreve-db` from `components/postgres`.
+- [x] Files in the bucket `cloudreve` (512 GB quota), S3 user `cloudreve`,
+      key sops-encrypted in the app repo.
+- [x] Browsers upload and download straight to the bucket through
+      `files-s3.buunk.org`: a gateway that passes only `/cloudreve` and
+      fixes the Content-Type Ceph rejects. 25 MB chunks (Cloudflare's
+      100 MB request limit). CORS set by Cloudreve for its origin.
+- [ ] Login through Keycloak: Pro-only in Cloudreve,
+      [hgd1-cloudreve#1](https://github.com/jurrebuunk/hgd1-cloudreve/issues/1).
+      Own accounts for now, registration off.
+- [ ] Mail (password resets): [#4](https://github.com/jurrebuunk/hgd1-k8s/issues/4).
+- [ ] Done when: from outside the network I log in, upload a file over
+      100 MB, download it, and see it in `labctl s3 bucket show cloudreve`.
 
 ### 8. More apps
 
