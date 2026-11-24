@@ -1,0 +1,33 @@
+# The client secret of the Keycloak client cloudreve. keycloak-config-cli
+# puts it in the realm ($(env:CLOUDREVE_CLIENT_SECRET) in hgd1.yaml); the
+# same value is deploy/oidc.sops.yaml in hgd1-cloudreve.
+apiVersion: v1
+kind: Secret
+metadata:
+    name: keycloak-client-cloudreve
+stringData:
+    client-secret: ENC[AES256_GCM,data:eb5foi6NvBDaf9jd4vvjqRtaitgnzthVBReEVLaUhXN6KQOPghXhjsSVFP6lltq1,iv:F4PNDX1IpfufTyzw7ZPW6X66JP1iB0UimxuLFkXcit0=,tag:KgyGFQFET+SOgaKRqKIGjg==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBoSWZacktJZ3JYS1FXaDh6
+            blRPb1Y2MENLQUxqZVYyTmlHeExXSExweDM4CmZVcVNRR2xKZWNseEJkMVh5NFpD
+            MkxkdTFtWnk2Y2ZaOVNLbG5MT1VhSVkKLS0tIHdEaVM5bkdiYmFIWVRvUXY0TzB1
+            MGh4V084NjAxemJNNWtNR3VHYWxvMWcKwoBdFn7JM6pR1Y3e1eKMQmYKeerQ28m7
+            zw4lhzj3/rTzqsH0t9KN6ppxJIeveCcU1+ZN6gJI1pbMhkmUWNS3yw==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1fharluqqx8n8clz5an6qte8hgqrkawjz6sy23humd2awzr0vq5tsvv6xgf
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBTNzVYZEpYenBES2tGcS80
+            cjRPalpHS1lkQ3AxcVF5bGlXV1lldzRSdkNZCjEvaTBXR29ncWhvemJ0NjFMbmFh
+            dU9WeG1aRG4weDNrczdyZkI4Yi9tSWsKLS0tIDhBdEJIZ2JUdnhJZnhXYlNWVHJo
+            THNpZWZkaDhiaEpCMEZLKzIxdk9IMWsKfZLUM6IgM2bYgq1V66b0Cbcv36EtXOX/
+            t0Q20+NwxWL8pM1l+Korw4ej9/FFXIATDupJ5M8NN53QcZ6BVA3o0Q==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age14lsxk30xq82ywvkf4l8psk55a0tkls87qx3k6u0zllyjt9tpwawsdgycxx
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-11-24T21:43:51Z"
+    mac: ENC[AES256_GCM,data:6VB2RAZQGyHDda+6w4kKBME/ujIAhVIBaZHKsnrIefTAq9E201fWIpRAszZ4irrzOujb+xZCT3FWS449+DljEnxwwR60fu5Da3BEsHojZByEAwl3KvLuyJ4crP6/N85dE+y8pUrXig6sefJgmoJd5MpQLAs+TwnmsTcjvjU9OeU=,iv:tV6l/ArD4ESqNrhiK/2BIphcrt7D7Gg6tOByQrVRZ+Q=,tag:fqh6QqAM+pwd1relxna6rg==,type:str]
+    version: 3.13.3

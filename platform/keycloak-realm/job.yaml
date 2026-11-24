@@ -27,6 +27,10 @@ spec:
             - { name: KEYCLOAK_AVAILABILITYCHECK_ENABLED, value: "true" }
             - { name: KEYCLOAK_AVAILABILITYCHECK_TIMEOUT, value: 300s }
             - { name: IMPORT_FILES_LOCATIONS, value: /config/*.yaml }
+            # $(env:NAME) in the realm files: client secrets from Secrets.
+            - { name: IMPORT_VARSUBSTITUTION_ENABLED, value: "true" }
+            - name: CLOUDREVE_CLIENT_SECRET
+              valueFrom: { secretKeyRef: { name: keycloak-client-cloudreve, key: client-secret } }
           resources:
             requests: { cpu: 50m, memory: 256Mi }
             limits: { memory: 512Mi }
