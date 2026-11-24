@@ -1,0 +1,40 @@
+# Applies hgd1.yaml to Keycloak with the machine login config-cli. The
+# config map's name changes with its content, so a change makes a new Job.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: keycloak-realm
+spec:
+  backoffLimit: 10
+  template:
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: config-cli
+          image: adorsys/keycloak-config-cli:6.5.1-26
+          env:
+            - { name: KEYCLOAK_URL, value: "http://keycloak-service.keycloak.svc.cluster.local:8080" }
+            - { name: KEYCLOAK_GRANTTYPE, value: client_credentials }
+            - { name: KEYCLOAK_LOGINREALM, value: master }
+            - name: KEYCLOAK_CLIENTID
+              valueFrom: { secretKeyRef: { name: keycloak-config-cli, key: client-id } }
+            - name: KEYCLOAK_CLIENTSECRET
+              valueFrom: { secretKeyRef: { name: keycloak-config-cli, key: client-secret } }
+            - { name: KEYCLOAK_AVAILABILITYCHECK_ENABLED, value: "true" }
+            - { name: KEYCLOAK_AVAILABILITYCHECK_TIMEOUT, value: 300s }
+            - { name: IMPORT_FILES_LOCATIONS, value: /config/*.yaml }
+          resources:
+            requests: { cpu: 50m, memory: 256Mi }
+            limits: { memory: 512Mi }
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: [ALL] }
+          volumeMounts:
+            - { name: config, mountPath: /config }
+      volumes:
+        - name: config
+          configMap: { name: keycloak-realm }

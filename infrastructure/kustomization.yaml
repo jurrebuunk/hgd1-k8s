@@ -7,3 +7,4 @@ resources:
   - cert-manager/release.yaml
   - cloudnative-pg/release.yaml
   - monitoring/release.yaml
+  - keycloak-operator/operator.yaml

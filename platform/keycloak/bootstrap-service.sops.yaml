@@ -1,0 +1,34 @@
+# Machine login keycloak-config-cli applies the realm with (client
+# credentials in the master realm).
+apiVersion: v1
+kind: Secret
+metadata:
+    name: keycloak-config-cli
+    namespace: keycloak
+stringData:
+    client-id: ENC[AES256_GCM,data:lon6iyiHZG+E6Q==,iv:KJSlK+G0F2U2LETzIxs4tcpkqbMpjQ3xYyB3jqdJ25U=,tag:axrshK4FPsok+xqFzKyoIg==,type:str]
+    client-secret: ENC[AES256_GCM,data:IAZQe9MxVBDqAV9TPejT5joF0hJFL4UrVYa1b9lG9O1MQk8p8nNdHf0ivg==,iv:IjOhcPugDA4zO1uxk5XI93jnX9EnSa3e6ZpdGrbpO90=,tag:BwXquJjAo5HlqDuFcSnjUA==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB1ZFB5M05BaEN3ak9HaDFT
+            MjExL3Bza1ZRRk5IeVlYM0FVdTd5QjkraG5JCmh2aEpFVFZHRCtLWlhkUDRDNmhh
+            cDU2S3MxLzdxcFVWQXMyMzA1TGF4LzgKLS0tIEpwR29OQjVaQzZtWFdpNllnNjFY
+            UnUwY0hMbDlZSEdUZDRsTUMyM0ltVVkKp/tEPgcsXVognT2GmOKcNqzQZyOWaRdN
+            ZoHFvp9e9YmkL5FhTesdQMHzLU8jgEwwf1BALHGBZFlWeFTchi8ArA==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1fharluqqx8n8clz5an6qte8hgqrkawjz6sy23humd2awzr0vq5tsvv6xgf
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArQWhycXBubWZHejNjMHBN
+            NFNQNlAyeTJiWDBIUngycTA0U0h2Wjd2d0NnCnlObnNmbXN1ZlBHZXM0T1Q4YnVu
+            TnByV29Qby8wc1QxVmliY3ExUStnV3MKLS0tIEl2M3hZOE5Ta25FWlBtZ0pRcEVv
+            VnIwWGxrcFNsNlZ5YzJUaGd5TFMzcm8KPt+6fBF9K49l59v8IsGh6VDAAZ35sEc/
+            wNhezPJqqhInsSCViW5mzBEtriBgtJ02M3VJDpzNSsGOjphUjfGDiw==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age14lsxk30xq82ywvkf4l8psk55a0tkls87qx3k6u0zllyjt9tpwawsdgycxx
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-11-24T14:43:32Z"
+    mac: ENC[AES256_GCM,data:lSQ7QZ7ypJHi2aGL0Tibj2cSdYpz9gmwuatBy96ymZldD91y8d4a7e7KZ2/2cQ5CLnT88PMpyo2jhgDd8SmIQYXoih5ooIA9iqUYcA5rfquFpjO3UhvXhxDMZUPXzdngK0Eu1Etbz1JK1wxT5bgg1Q4ciJRuj3SvJqHmPMisnQI=,iv:kjMLpSKi6h/IeWM97mNUYr+Nd2T+Xf7nP6K9E78jCu4=,tag:u8jPochZm8k4QhSrocxRfg==,type:str]
+    version: 3.13.3

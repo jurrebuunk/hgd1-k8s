@@ -1,0 +1,41 @@
+# Logins for public apps (plan step 6) at https://auth.buunk.org, realm hgd1.
+# Cloudflare terminates TLS and cloudflared forwards plain HTTP with
+# X-Forwarded headers. The admin console is not public (the tunnel answers
+# 404 for /admin and the master realm); reach it with
+#   kubectl -n keycloak port-forward svc/keycloak-service 8080
+# and http://localhost:8080/admin/.
+apiVersion: k8s.keycloak.org/v2beta1
+kind: Keycloak
+metadata:
+  name: keycloak
+spec:
+  instances: 2
+  db:
+    vendor: postgres
+    host: keycloak-db-rw
+    database: keycloak
+    usernameSecret: { name: keycloak-db-app, key: username }
+    passwordSecret: { name: keycloak-db-app, key: password }
+  http:
+    httpEnabled: true
+  hostname:
+    hostname: https://auth.buunk.org
+    admin: http://localhost:8080
+    backchannelDynamic: true
+  proxy:
+    headers: xforwarded
+  ingress:
+    enabled: false
+  bootstrapAdmin:
+    user: { secret: keycloak-bootstrap-admin }
+    service: { secret: keycloak-config-cli }
+  scheduling:
+    topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels: { app: keycloak }
+  resources:
+    requests: { cpu: 100m, memory: 640Mi }
+    limits: { memory: 1Gi }

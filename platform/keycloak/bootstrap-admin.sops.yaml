@@ -1,0 +1,34 @@
+# The temporary admin (plan step 6): log in once through the admin console,
+# create your own account in the master realm's admins, then delete temp-admin.
+apiVersion: v1
+kind: Secret
+metadata:
+    name: keycloak-bootstrap-admin
+    namespace: keycloak
+stringData:
+    username: ENC[AES256_GCM,data:3GcoGisN8QZbPA==,iv:ZpFDbLIXlE8AKepIaclBXWtrZq1sXeJx9Ic6qP8+HCw=,tag:3KZON3iugO56lW8vVAJHCw==,type:str]
+    password: ENC[AES256_GCM,data:Vj0OL8YTArEzmh9LFwM6By+RQEB5tevxZItoQuQh+CA=,iv:KgAtm17PlKOs7Dt3cctYTvYd+tAcVWlnnOqsPMlm/aU=,tag:StyeGk4VovJqr7jfqVIQKA==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArZWl0cWJFVUx3c1Z5T0I1
+            c3F4T3owNFlsWnFodnN2QVo1cnRvNkhRSWtRCjVSS1Y2K3FXdzl4aTBTcDlkM21P
+            MlFNWWdPRXRPeVB2RDlyV0lnaC91VWsKLS0tIDhRb2toNTVOVUg2aUNzc0IrOHcw
+            UDV1U25MNzdva1NURDl6UGJZOUpwUGsKVRSh7PrlmjYoz3U7kafEtxQOhtc/Q7Ov
+            MvaL4o31OyEDNGrarKpJ2UVzwGLTXNEMkeLbPcEyYEfXZmi21h52QQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1fharluqqx8n8clz5an6qte8hgqrkawjz6sy23humd2awzr0vq5tsvv6xgf
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBlUFN0aTF2YVVXNm5GMWs0
+            RisrdUJYN3VNTHAwc2U2ZnI3QmxiVzVrTkJBCldMbkVHYURSTThoNVkreVMzR2l3
+            ekJKRGVWK3I1YUdhVzMyOFZINitaV00KLS0tIHhzN0J2MVMrV2Z2b0MxR3owN1lZ
+            bFFMMm96ZGpsM2pTUlpQYkNjdWozUlkKqRfyShSIHdPNjWwPwIMSm905v++fC6Is
+            6TDPmKp+SBoqg0jRL85kryBGquLBeVjem+lGu4vgzevkH/qDo+0XBg==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age14lsxk30xq82ywvkf4l8psk55a0tkls87qx3k6u0zllyjt9tpwawsdgycxx
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-11-24T14:43:32Z"
+    mac: ENC[AES256_GCM,data:AlWLIgm+0ccYPkMeGG2Ws40q4t9Olk7/KapuPY+PmzoxdH52+pwDls5K5jMZzbO7GVL3MZZDndOF/DrAy831l7arR3KVoS7bzIymVFZ+CNeBodVLWIUWPcjZ+nnPBuhv2MgPqB7uJp1mVY+wA/bWPGwZ0cPCr3mR/pTtLK1UC8k=,iv:ULD3FU6VwRbkdyQrf858rdAmibbtexDFknSd6Jwnlv8=,tag:q1DRmia6PY+UUDxmpUW48Q==,type:str]
+    version: 3.13.3

@@ -1,0 +1,20 @@
+# The realm (platform/keycloak-realm) after Keycloak runs. force: a Job can't
+# be changed, so a new realm file replaces it.
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: keycloak-realm
+  namespace: flux-system
+spec:
+  interval: 10m
+  retryInterval: 1m
+  timeout: 10m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./platform/keycloak-realm
+  prune: true
+  force: true
+  wait: true
+  dependsOn:
+    - name: platform

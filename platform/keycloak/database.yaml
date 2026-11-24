@@ -1,0 +1,11 @@
+# Keycloak's own Postgres: three servers, one per host, because every login
+# depends on it. Backups come from components/postgres.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: keycloak-db
+spec:
+  instances: 3
+  storage: { size: 5Gi }
+  bootstrap:
+    initdb: { database: keycloak, owner: keycloak }

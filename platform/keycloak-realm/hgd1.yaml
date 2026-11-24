@@ -1,0 +1,19 @@
+# The realm hgd1: settings, groups and (later) clients and their roles.
+# People are not in here: accounts and group membership are made in the
+# admin console. keycloak-config-cli applies this on every change; groups,
+# roles and clients it manages are removed when deleted here.
+realm: hgd1
+enabled: true
+displayName: hgd1
+registrationAllowed: false
+resetPasswordAllowed: false # no mail server yet
+loginWithEmailAllowed: true
+duplicateEmailsAllowed: false
+sslRequired: external
+bruteForceProtected: true
+failureFactor: 10
+passwordPolicy: "length(12) and notUsername and notEmail"
+groups:
+  - name: admins
+  - name: family
+  - name: friends

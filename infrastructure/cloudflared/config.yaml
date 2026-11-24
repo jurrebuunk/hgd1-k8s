@@ -6,4 +6,11 @@ credentials-file: /etc/cloudflared/credentials/credentials.json
 ingress:
   - hostname: test.buunk.org
     service: http://whoami.test-page.svc.cluster.local:80
+  # Keycloak: logins for the hgd1 realm only; the admin console and the
+  # master realm are not public (kubectl port-forward instead).
+  - hostname: auth.buunk.org
+    path: ^/(admin|realms/master)(/.*)?$
+    service: http_status:404
+  - hostname: auth.buunk.org
+    service: http://keycloak-service.keycloak.svc.cluster.local:8080
   - service: http_status:404
