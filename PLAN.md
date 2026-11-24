@@ -1,8 +1,8 @@
 # Plan
 
-Where this repo is going, so I can pick it up from here. Steps 1–3 (Flux and
-sops, metrics-server and local-path, the public tunnel) run on the cluster
-since 2026-11-24.
+Where this repo is going, so I can pick it up from here. Steps 1–5 (Flux and
+sops, metrics-server and local-path, the public tunnel, Postgres, monitoring)
+run on the cluster since 2026-11-24.
 
 ## Goal
 
@@ -38,7 +38,8 @@ clusters/hgd1/          # entry point: Flux itself and three Kustomizations
   config.yaml           #   → ./config, dependsOn infrastructure
   apps.yaml             #   → ./apps, dependsOn config
 infrastructure/         # controllers, one folder each (HelmRepository + HelmRelease)
-  metrics-server/  local-path/  cloudflared/  cloudnative-pg/  monitoring/  keycloak/
+  metrics-server/  local-path/  cloudflared/  cert-manager/  cloudnative-pg/  monitoring/
+components/             # reusable pieces for apps, e.g. postgres (defaults and backups)
 config/                 # what needs their CRDs: Postgres template, tunnel routes
 apps/                   # one file per app, pointing Flux at the app's repo
 .sops.yaml              # which files are encrypted, for which age key
@@ -93,28 +94,69 @@ and its CNAME.
 
 ### 4. Postgres: CloudNativePG
 
-- [ ] The operator, and one template: 3 instances, one per zone, on
-      `local-path`.
-- [ ] Backups to the bucket `pg-backups` (user and bucket made once with
-      `labctl s3`; the key sops-encrypted here), set in the template:
+Every app that needs Postgres gets **its own small cluster** (a primary plus
+copies) in its own namespace, as CloudNativePG recommends; there is no shared
+database server.
+
+- [x] cert-manager (for the backup plugin's TLS), the CloudNativePG operator
+      (1.30.1) and its Barman Cloud plugin, from Flux.
+- [x] Backups to the bucket `pg-backups` (user and bucket made with
+      `labctl s3`; the key sops-encrypted in `components/postgres/`), one
+      folder per cluster:
 
     | Setting | Value | Why |
     | --- | --- | --- |
-    | WAL upload (`archive_timeout`) | 5 min (15 min if fewer uploads matter more) | At most that much lost; an idle database uploads nothing |
+    | WAL upload (`archive_timeout`) | 5 min | At most that much lost; an idle database uploads nothing |
     | Compression | zstd | Less written to S3 |
-    | Full copy | weekly | The continuous WAL covers the days between |
+    | Full copy | weekly (Sunday 03:00), and one at creation | The continuous WAL covers the days between |
     | Retention | 14 days | Old backups are deleted automatically |
 
-- [ ] Wear: the S3 side is cheap (Ceph's HDDs spin all the time anyway and
-      don't wear from writes); Postgres itself writes to the NVMe of three
-      hosts. Watch `labctl disk list` (WEAR) once databases run.
-- [ ] Done when: a test database survives deleting its primary, and a new
-      cluster restores from the S3 backup.
+- [x] `components/postgres`: an app's `Cluster` (name, instances, size,
+      bootstrap) gets the rest from it: servers in different zones on
+      `local-path`, the backups above, metrics scraping, modest resources.
+      CloudNativePG makes the database, the user and the Secret
+      `<cluster>-app` (with `uri`, `host`, `username`, `password`, …).
+- [x] Done when: a test database survives deleting its primary, and a new
+      cluster restores from the S3 backup. Tested 2026-11-24: the copy took
+      over in 7 s with all rows; a cluster restored only from S3 had every
+      row, including one written just before. The test and its backups are
+      removed.
+- [x] Wear: the S3 side is cheap (Ceph's HDDs spin all the time anyway);
+      Postgres itself writes to the NVMe of the hosts it runs on. Watch
+      `labctl disk list` (WEAR) once databases run.
+
+**An app's database** (in the app's folder, with `components: [../../components/postgres]`
+in its `kustomization.yaml`):
+
+```yaml
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata: { name: notes-db }
+spec:
+  instances: 2           # 3 for apps everyone depends on (Keycloak)
+  storage: { size: 2Gi }
+  bootstrap: { initdb: { database: notes, owner: notes } }
+```
+
+The app reads `notes-db-app` (key `uri`) and connects to `notes-db-rw`. A
+Helm chart's own built-in Postgres is never used: turn it off and point the
+chart at the Cluster.
 
 ### 5. Monitoring inside k3s
 
-- [ ] vmagent and Vector, sending pod metrics and logs to `mon.lan.buunk.org`.
-- [ ] Done when: `labctl logs` and `labctl metrics` show pod data.
+- [x] vmagent (kubelets, cAdvisor, pods and services with
+      `prometheus.io/scrape`) and kube-state-metrics, written to all three
+      hosts' VictoriaMetrics with `cluster=hgd1-k8s`.
+- [x] Vector on every node: pod logs to the hosts' VictoriaLogs, `host` =
+      node, `unit` = container, plus `namespace` and `pod`.
+- [x] Both go over the storage network to each host's storage IP, like the
+      VMs' own logs; no router rule (the hosts accept 8428 and 9428 on
+      `br-stor`, `nix-hgd1-cluster`).
+- [x] Done when: `labctl logs --unit cloudflared` shows the tunnel's lines and
+      `labctl metrics query 'kube_pod_info{cluster="hgd1-k8s"}'` the pods.
+      Tested 2026-11-24, every target up.
+- [ ] Pods reach more than they need on the storage network:
+      [#2](https://github.com/jurrebuunk/hgd1-k8s/issues/2).
 
 ### 6. Keycloak
 
@@ -153,7 +195,7 @@ and its CNAME.
 | 2 | `nix-hgd1-cluster` | `metrics-server` and `local-storage` disabled in k3s |
 | 3 | Cloudflare | The tunnel `hgd1-apps` (done) and a DNS token for external-dns (#1) |
 | 4, 7 | `labctl` | S3 users and buckets (needs the RGW cap for `clusterd`) |
-| 5 | `hgd1-network` | Firewall: k8s VLAN → `10.10.20.10` on 8428 and 9428 |
+| 5 | `nix-hgd1-cluster` | The hosts accept 8428 and 9428 on the storage bridge (done; no router rule needed) |
 
 ## Later
 
