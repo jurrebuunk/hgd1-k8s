@@ -4,8 +4,6 @@
 tunnel: 464b884a-410d-4066-8946-0532c41f1978 # hgd1-apps
 credentials-file: /etc/cloudflared/credentials/credentials.json
 ingress:
-  - hostname: test.buunk.org
-    service: http://whoami.test-page.svc.cluster.local:80
   # Keycloak: logins for the hgd1 realm only; the admin console and the
   # master realm are not public (kubectl port-forward instead).
   - hostname: auth.buunk.org
@@ -13,4 +11,15 @@ ingress:
     service: http_status:404
   - hostname: auth.buunk.org
     service: http://keycloak-service.keycloak.svc.cluster.local:8080
+  # Cloudreve's bucket for browsers (signed links, created by Cloudreve).
+  # Only the bucket cloudreve: everything else on this host is 404, so no
+  # other bucket and no bucket list is reachable. The Host header stays
+  # files-s3.buunk.org, which S3 signatures include.
+  - hostname: files-s3.buunk.org
+    path: ^/cloudreve(/.*)?$
+    service: https://s3.lan.buunk.org
+    originRequest:
+      originServerName: s3.lan.buunk.org
+  - hostname: files-s3.buunk.org
+    service: http_status:404
   - service: http_status:404
