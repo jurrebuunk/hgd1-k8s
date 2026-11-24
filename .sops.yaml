@@ -1,0 +1,10 @@
+# Secrets are encrypted for two age keys: the cluster's (Flux decrypts with
+# it; Secret flux-system/sops-age, backed up in nix-hgd1-cluster as
+# secrets/flux-sops-age.age) and mine (from ~/.ssh/id_ed25519, so I can edit
+# them: SOPS_AGE_KEY_CMD="ssh-to-age -private-key -i ~/.ssh/id_ed25519" sops <file>).
+creation_rules:
+  - path_regex: .*\.sops\.yaml$
+    encrypted_regex: ^(data|stringData)$
+    age: >-
+      age1fharluqqx8n8clz5an6qte8hgqrkawjz6sy23humd2awzr0vq5tsvv6xgf,
+      age14lsxk30xq82ywvkf4l8psk55a0tkls87qx3k6u0zllyjt9tpwawsdgycxx

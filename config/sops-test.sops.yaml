@@ -1,0 +1,32 @@
+# Proves Flux decrypts sops secrets (plan step 1). Harmless; delete any time.
+apiVersion: v1
+kind: Secret
+metadata:
+    name: sops-test
+    namespace: flux-system
+stringData:
+    check: ENC[AES256_GCM,data:opyL2+j+EkLBLyD1BDiZ8C8=,iv:cFfluEK28k9pyjgt6cr8QwtsmEkcQSEqK9lMTnYQYtY=,tag:/DMEya19KndZQQjp7F1nsw==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBmNEJlL2ZMbDAvRmRoVFlT
+            dW4wb1pGQ29IVnE0TlZ0ei83RE55OWk5bFdZCmRUM3lBaGFjSjVtVDI3eFBsYWlo
+            YTBwc1pBZ0ZzRTZEMUIyUG9xRmo2U3cKLS0tIFNGeEdWVmV2dGpxTnErVlh6NS9S
+            d2FPMVRwcFhtU3pxT1lIT3Z5WHJEblUK2P8WYvH3G09c119EfWV4zx5Dm3jg4MXz
+            2jqeJXkaFHgD9KzIRtQav3Q/lKo3MS0IGpDPnICIgOlSFHONQW9Qzg==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1fharluqqx8n8clz5an6qte8hgqrkawjz6sy23humd2awzr0vq5tsvv6xgf
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAvamNJekdxMnRKWDJjRmZQ
+            anR5ejhxUDlYaTg1ejIvd0tNTUlucHdCZTFFClhBR05qSHp6aHRRZlZVVk1MeUxv
+            TW93U0FpUEVLRTdCdjZneHRFd1M1ODAKLS0tIER6OTVoc3NscTk0c1hnRjR1VWNO
+            VHR5SFBYZEpTcVdTV3lWVWMyZ2owMjgKiOiQudWtg6LSLPzc6pIluAxh23HAGXEf
+            p6RrGmnzdrmHgnl9bceiiCQ885nGN100Fh4zsqupdXbEDJzSaG9OvQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age14lsxk30xq82ywvkf4l8psk55a0tkls87qx3k6u0zllyjt9tpwawsdgycxx
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-11-24T11:53:18Z"
+    mac: ENC[AES256_GCM,data:TJUT3H+3dM0Fxa+mDph7jkTAOfVT2eXB+f8oGGk96N10o/cZVBmb+k8aW5Pmy7DMmAnFydPTcvpg7LorTgYI0EAb3lCfpjHgzOelsWrzENEMrpni/ki2BJc5k4cMUAxJ9VfFb+y7t8srynb7bGEZC0T2Qfqg6E13TglOT7jf6bY=,iv:uzgbr1inTY+Yj05MbPK3Y2neNDGE3N9WBjOJiW3iJdE=,tag:9zreoz14ZfDhGWu6Nr4+qw==,type:str]
+    version: 3.13.3
