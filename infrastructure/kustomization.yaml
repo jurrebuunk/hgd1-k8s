@@ -4,3 +4,5 @@ resources:
   - metrics-server/release.yaml
   - local-path/release.yaml
   - cloudflared
+  - cert-manager/release.yaml
+  - cloudnative-pg/release.yaml

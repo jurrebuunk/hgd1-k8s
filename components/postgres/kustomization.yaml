@@ -1,0 +1,43 @@
+# Defaults for an app's Postgres. Use it from the app's kustomization.yaml
+# next to a Cluster (one per namespace):
+#
+#   components: [../../components/postgres]
+#
+# It adds: servers on local-path in different zones, WAL archived to S3
+# within 5 minutes, a weekly full copy, 14 days kept, modest resources. The
+# app's own Cluster fields (instances, storage size, bootstrap) stay its own.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+resources:
+  - backup-s3.sops.yaml
+  - objectstore.yaml
+  - scheduledbackup.yaml
+patches:
+  - target: { group: postgresql.cnpg.io, kind: Cluster }
+    patch: |-
+      apiVersion: postgresql.cnpg.io/v1
+      kind: Cluster
+      metadata:
+        name: any
+      spec:
+        storage:
+          storageClass: local-path
+        affinity:
+          topologyKey: topology.kubernetes.io/zone
+          podAntiAffinityType: required
+        postgresql:
+          parameters:
+            archive_timeout: 5min
+        plugins:
+          - name: barman-cloud.cloudnative-pg.io
+            isWALArchiver: true
+            parameters:
+              barmanObjectName: pg-backups
+        resources:
+          requests: { cpu: 50m, memory: 256Mi }
+          limits: { memory: 512Mi }
+replacements:
+  - source: { group: postgresql.cnpg.io, kind: Cluster, fieldPath: metadata.name }
+    targets:
+      - select: { kind: ScheduledBackup }
+        fieldPaths: [spec.cluster.name]

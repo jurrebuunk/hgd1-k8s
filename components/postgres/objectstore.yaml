@@ -1,0 +1,16 @@
+# Where this namespace's Postgres clusters back up to: the bucket pg-backups,
+# one folder per cluster (s3://pg-backups/<cluster name>/).
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: pg-backups
+spec:
+  retentionPolicy: 14d
+  configuration:
+    destinationPath: s3://pg-backups/
+    endpointURL: https://s3.lan.buunk.org
+    s3Credentials:
+      accessKeyId: { name: pg-backup-s3, key: ACCESS_KEY_ID }
+      secretAccessKey: { name: pg-backup-s3, key: ACCESS_SECRET_KEY }
+    wal: { compression: zstd, maxParallel: 2 }
+    data: { compression: zstd, jobs: 2 }

@@ -1,0 +1,13 @@
+# A full copy every Sunday at 03:00 (and one right after the cluster is
+# made); the WAL in between is archived within 5 minutes.
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: weekly
+spec:
+  schedule: "0 0 3 * * 0"
+  immediate: true
+  backupOwnerReference: self
+  method: plugin
+  pluginConfiguration: { name: barman-cloud.cloudnative-pg.io }
+  cluster: { name: set-by-replacement }

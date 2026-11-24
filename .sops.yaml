@@ -3,6 +3,14 @@
 # secrets/flux-sops-age.age) and mine (from ~/.ssh/id_ed25519, so I can edit
 # them: SOPS_AGE_KEY_CMD="ssh-to-age -private-key -i ~/.ssh/id_ed25519" sops <file>).
 creation_rules:
+  # Shared pieces (components/) get each app's namespace from kustomize, so
+  # their integrity check covers only the encrypted values.
+  - path_regex: ^components/.*\.sops\.yaml$
+    encrypted_regex: ^(data|stringData)$
+    mac_only_encrypted: true
+    age: >-
+      age1fharluqqx8n8clz5an6qte8hgqrkawjz6sy23humd2awzr0vq5tsvv6xgf,
+      age14lsxk30xq82ywvkf4l8psk55a0tkls87qx3k6u0zllyjt9tpwawsdgycxx
   - path_regex: .*\.sops\.yaml$
     encrypted_regex: ^(data|stringData)$
     age: >-
