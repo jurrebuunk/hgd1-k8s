@@ -23,8 +23,8 @@ this repo (public access, Postgres, logins, monitoring).
 On top of that, from this repo: [public access](../concepts/public-access.md)
 through a Cloudflare Tunnel, [Postgres](../concepts/postgres.md) with S3
 backups, [logins](../concepts/keycloak.md) through Keycloak and
-[monitoring](../concepts/monitoring.md) of pods. Local ingress for LAN-only
-services comes later.
+[monitoring](../concepts/monitoring.md) of pods. Internal apps over WARP
+come later ([roadmap, step 10](../reference/roadmap.md#10-internal-apps-over-warp)).
 
 ## Access
 
@@ -162,8 +162,10 @@ Cloudflare handles TLS, and no port on the network is opened
 use Keycloak (`auth.buunk.org`) over OIDC. The first one is Cloudreve
 (`cloudreve.buunk.org`).
 
-Services that only need to be reachable on the LAN come later, with an
-ingress controller on load balancer IPs in VLAN 40 (`10.10.40.200–249`).
+Services that shouldn't be public come later, over WARP instead of a
+local ingress: a second tunnel in the cluster, one private hostname route
+per app under `buunk.org`, HTTPS from an internal Traefik with cert-manager
+([roadmap, step 10](../reference/roadmap.md#10-internal-apps-over-warp)).
 
 ## Checklist
 

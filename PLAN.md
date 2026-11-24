@@ -245,6 +245,69 @@ console but ours. Keycloak stays where accounts and passwords live.
       it ([hgd1-cloudreve#2](https://github.com/jurrebuunk/hgd1-cloudreve/issues/2)).
       Also fixes Cloudreve's own uploaded avatars being lost on restart.
 
+### 10. Internal apps over WARP
+
+Apps that shouldn't be public, reachable from anywhere over WARP, for me and
+later for family. Not through a local ingress on VLAN 40: the VLANs are
+strict, and this needs no router rule, VLAN change or load balancer IP.
+
+```mermaid
+flowchart LR
+  dev[Device<br/>WARP] --> cf[Cloudflare Zero Trust]
+  cf -- "notes.buunk.org<br/>(private hostname route)" --> int[cloudflared hgd1-internal<br/>in k3s]
+  cf -- "10.10.0.0/16<br/>(virtual network hgd1-admin)" --> adm[cloudflared hgd1-admin<br/>on the hosts]
+  int --> traefik[Traefik, ClusterIP only<br/>TLS from cert-manager] --> app[App Service]
+```
+
+- **A second tunnel in the cluster, `hgd1-internal`.** `cloudflared` runs
+  in k3s like `hgd1-apps` and reaches apps over the cluster network. It
+  sits next to `hgd1-admin`: WARP is one connection, and Cloudflare picks
+  the tunnel by destination.
+- **Names under `buunk.org`, like the public apps:** one
+  [private hostname route](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/private-net/cloudflared/connect-private-hostname)
+  per app (`notes.buunk.org` → `hgd1-internal`), no public DNS record, so
+  the name only exists for people on WARP. **Never a route for
+  `*.buunk.org`**: it would take over the public apps and the older
+  hostnames (drive, crm, …) for everyone on WARP. Making an app public
+  later: delete its route, add its proxied CNAME.
+- **HTTPS from the cluster:** a private route passes through to the
+  origin, so Cloudflare doesn't do TLS. An internal Traefik (ClusterIP
+  only, no MetalLB) ends TLS with Let's Encrypt certificates from
+  cert-manager over DNS-01 on `buunk.org` (a sops Cloudflare token with DNS
+  edit; the same kind external-dns needs, #1). Certificates show up in the
+  public certificate logs, so the app names are visible there (not
+  reachable); `<app>.int.buunk.org` with one wildcard would hide them.
+- **Admin only when I need it:** move the route `10.10.0.0/16` of
+  `hgd1-admin` into its own
+  [virtual network](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/cloudflared/tunnel-virtual-networks)
+  `hgd1-admin`; day to day the WARP client is on the default network
+  (apps), and I switch to `hgd1-admin` for managing. The Gateway rule
+  "only my email may reach `10.10.0.0/16`" stays.
+
+Steps:
+
+- [ ] Test first: are private hostname routes reachable while the client
+      is on another virtual network? (The docs don't say; losing the apps
+      while on admin is acceptable.)
+- [ ] Check the account's initial resolved IP range: Chrome 142+ blocks the
+      old default `100.80.0.0/16`; the new default is `172.64.128.0/20`
+      ([changelog](https://developers.cloudflare.com/changelog/post/2026-08-11-hostname-routing-ga-public-initial-resolved-ips/)).
+      Move it if needed, and check the Split Tunnel Include list.
+- [ ] Tunnel `hgd1-internal`: credentials as sops, `cloudflared` in
+      `infrastructure/`, two replicas in different zones.
+- [ ] Internal Traefik (ClusterIP) and a CoreDNS entry so `cloudflared`
+      resolves each app name to it; cert-manager ClusterIssuer for Let's
+      Encrypt DNS-01 with the Cloudflare token.
+- [ ] Gateway network rules per app (who may reach which name), next to
+      the existing admin rules.
+- [ ] Virtual network `hgd1-admin` for the admin route, then: WARP on all
+      day with the default network, switch for admin.
+- [ ] WARP enrolment through Keycloak (Cloudflare's generic OIDC login)
+      instead of one-time PIN for my email only, so family enrol with their
+      buunk account. Free plan: up to 50 users.
+- [ ] First internal app: `lab-console` at `lab.buunk.org` (instead of a
+      load balancer IP in VLAN 40), until it goes public behind Keycloak.
+
 ## Needed from other repos
 
 | Step | Where | What |
@@ -253,11 +316,10 @@ console but ours. Keycloak stays where accounts and passwords live.
 | 3 | Cloudflare | The tunnel `hgd1-apps` (done) and a DNS token for external-dns (#1) |
 | 4, 7 | `labctl` | S3 users and buckets (needs the RGW cap for `clusterd`) |
 | 5 | `nix-hgd1-cluster` | The hosts accept 8428 and 9428 on the storage bridge (done; no router rule needed) |
+| 10 | `nix-hgd1-cluster` | Remote access docs: admin route in virtual network `hgd1-admin`, WARP on all day; addresses page: `lab.buunk.org` over WARP and no MetalLB range |
 
 ## Later
 
-- Local ingress for services only on the LAN: MetalLB (`10.10.40.200–249`),
-  Traefik with Gateway API, cert-manager with DNS-01, `*.apps.lan.buunk.org`.
 - Forgejo, public and mirrored to GitHub.
 
 ## Not planned

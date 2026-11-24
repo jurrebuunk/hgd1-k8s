@@ -48,7 +48,7 @@ sequenceDiagram
 
 | Stage | How you reach it |
 | --- | --- |
-| Now | Internal only: `lab.buunk.org` points to a load balancer IP in VLAN 40 (`10.10.40.200–249`); reachable over WARP |
+| Now | Internal only: `lab.buunk.org` as a private hostname route over WARP, through the internal tunnel ([roadmap, step 10](../reference/roadmap.md#10-internal-apps-over-warp)) |
 | Later | Public through the [tunnel](public-access.md), with login through [Keycloak](keycloak.md) (OIDC). It only goes public once Keycloak is in front of it |
 
 ## How it works

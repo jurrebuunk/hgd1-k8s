@@ -93,7 +93,7 @@ flowchart LR
 | Keycloak at `auth.buunk.org` | <span class="status">Done</span> | [Keycloak](concepts/keycloak.md) |
 | Cloudreve at `cloudreve.buunk.org` | <span class="status">Done</span> | [hgd1-cloudreve](https://github.com/jurrebuunk/hgd1-cloudreve) |
 | Web UI (`lab-console`) | <span class="status status--planned">Planned</span> | [Web UI](concepts/web-ui.md) |
-| Local ingress (LAN-only services) | <span class="status status--planned">Later</span> | [PLAN.md](reference/roadmap.md#later) |
+| Internal apps over WARP (tunnel `hgd1-internal`) | <span class="status status--planned">Planned</span> | [Roadmap, step 10](reference/roadmap.md#10-internal-apps-over-warp) |
 
 ## I want to…
 
