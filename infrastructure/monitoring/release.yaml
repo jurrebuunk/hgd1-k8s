@@ -87,13 +87,20 @@ spec:
       - operator: Exists # every node, servers included
     persistence:
       hostPath: { path: /var/lib/vector-k8s } # /var/lib/vector is the VM's own Vector
-    # kubelet keeps pod logs here (the VM's root is tmpfs); Vector reads
-    # /var/log/pods.
-    extraVolumes:
-      - name: pod-logs
-        hostPath: { path: /var/lib/kubelet-pod-logs }
-    extraVolumeMounts:
+    service: { enabled: false } # nothing connects to it
+    # kubelet keeps pod logs in /var/lib/kubelet-pod-logs (the VM's root is
+    # tmpfs); Vector reads /var/log/pods, so that is mounted there instead of
+    # the node's /var/log (where a nested mount point can't be made).
+    defaultVolumes:
+      - { name: pod-logs, hostPath: { path: /var/lib/kubelet-pod-logs } }
+      - { name: var-lib, hostPath: { path: /var/lib/ } }
+      - { name: procfs, hostPath: { path: /proc } }
+      - { name: sysfs, hostPath: { path: /sys } }
+    defaultVolumeMounts:
       - { name: pod-logs, mountPath: /var/log/pods, readOnly: true }
+      - { name: var-lib, mountPath: /var/lib, readOnly: true }
+      - { name: procfs, mountPath: /host/proc, readOnly: true }
+      - { name: sysfs, mountPath: /host/sys, readOnly: true }
     resources:
       requests: { cpu: 20m, memory: 64Mi }
       limits: { memory: 256Mi }
