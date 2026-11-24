@@ -1,0 +1,32 @@
+# Cloudreve (https://files.buunk.org), deployed from its own repo. Flux adds
+# this repo's components/ to it, for the Postgres defaults.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: hgd1-cloudreve
+  namespace: flux-system
+spec:
+  url: https://github.com/jurrebuunk/hgd1-cloudreve
+  ref: { branch: main }
+  interval: 1m
+  include:
+    - repository: { name: flux-system }
+      fromPath: components
+      toPath: components
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cloudreve
+  namespace: flux-system
+spec:
+  interval: 10m
+  retryInterval: 1m
+  timeout: 10m
+  sourceRef: { kind: GitRepository, name: hgd1-cloudreve }
+  path: ./deploy
+  prune: true
+  wait: true
+  decryption:
+    provider: sops
+    secretRef: { name: sops-age }

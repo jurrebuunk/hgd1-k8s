@@ -2,4 +2,5 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 # One file per app repo (a GitRepository and a Flux Kustomization); the
 # apps' manifests live in their own repos.
-resources: []
+resources:
+  - cloudreve.yaml

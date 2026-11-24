@@ -11,15 +11,12 @@ ingress:
     service: http_status:404
   - hostname: auth.buunk.org
     service: http://keycloak-service.keycloak.svc.cluster.local:8080
-  # Cloudreve's bucket for browsers (signed links, created by Cloudreve).
-  # Only the bucket cloudreve: everything else on this host is 404, so no
-  # other bucket and no bucket list is reachable. The Host header stays
-  # files-s3.buunk.org, which S3 signatures include.
+  # Cloudreve's bucket for browsers (signed links), through its gateway
+  # (hgd1-cloudreve: only the bucket cloudreve, Host kept). 404 here for
+  # anything outside the bucket as well.
   - hostname: files-s3.buunk.org
     path: ^/cloudreve(/.*)?$
-    service: https://s3.lan.buunk.org
-    originRequest:
-      originServerName: s3.lan.buunk.org
+    service: http://s3-gateway.cloudreve.svc.cluster.local:80
   - hostname: files-s3.buunk.org
     service: http_status:404
   - service: http_status:404
