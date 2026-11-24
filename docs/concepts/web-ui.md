@@ -58,7 +58,7 @@ sequenceDiagram
 | Frontend | A small single-page app; flatwork-ui colours (`#1b1818`, `#8aa1a8`) |
 | Proxy | Caddy or nginx in the same pod, adds the token from a Kubernetes Secret |
 | Token | An `operator` token, encrypted with sops ([Manage secrets](../how-to/manage-secrets.md)) |
-| Network | One OPNsense rule: K8S → `10.10.20.20:443` (the API VIP), see the [network firewall](https://github.com/jurrebuunk/hgd1-network/blob/main/docs/firewall.md) |
+| Network | One OPNsense rule: K8S → `10.10.20.20:443` (the API VIP), see the [network firewall](https://jurrebuunk.github.io/hgd1-network/firewall/) |
 | Data | `/v1/status`, `/v1/metrics/query_range`, `/v1/logs/query` |
 | Actions | `/v1/actions/…`; every action shows what it will do and asks for confirmation |
 | Delivery | CI builds `ghcr.io/jurrebuunk/lab-console`; Flux rolls out new images |
