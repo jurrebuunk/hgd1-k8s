@@ -1,0 +1,10 @@
+# The master realm (Keycloak's admins) is reachable only through
+#   kubectl -n keycloak port-forward svc/keycloak-service 8080
+# Its address is localhost:8080, so the admin console's login also goes
+# through the port-forward; the tunnel answers 404 for /realms/master.
+# Only these keys are managed; the rest of master is left alone.
+realm: master
+attributes:
+  frontendUrl: http://localhost:8080
+bruteForceProtected: true
+failureFactor: 10

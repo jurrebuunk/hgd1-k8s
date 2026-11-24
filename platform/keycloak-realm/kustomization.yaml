@@ -4,4 +4,4 @@ namespace: keycloak
 resources: [job.yaml]
 configMapGenerator:
   - name: keycloak-realm
-    files: [hgd1.yaml]
+    files: [hgd1.yaml, master.yaml]
