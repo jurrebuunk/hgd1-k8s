@@ -170,7 +170,9 @@ chart at the Cluster.
       terminates TLS. The admin console and the `master` realm are **not
       public** (the tunnel answers 404); use
       `kubectl -n keycloak port-forward svc/keycloak-service 8080` and
-      `http://localhost:8080/admin/` (port 8080 exactly).
+      `http://localhost:8080/admin/` (port 8080 exactly). The `master`
+      realm's address is `http://localhost:8080` (`platform/keycloak-realm/master.yaml`),
+      so the admin console's login goes through the port-forward too.
 - [x] The realm `hgd1` from Git (`platform/keycloak-realm/hgd1.yaml`, applied
       by keycloak-config-cli on every change): settings, brute-force
       protection, password policy, groups `admins`, `family`, `friends`.
