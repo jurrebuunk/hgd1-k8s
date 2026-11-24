@@ -1,8 +1,8 @@
 # Plan
 
-Where this repo is going, so I can pick it up from here. Steps 1–5 (Flux and
-sops, metrics-server and local-path, the public tunnel, Postgres, monitoring)
-run on the cluster since 2026-11-24.
+Where this repo is going, so I can pick it up from here. Steps 1–6 (Flux and
+sops, metrics-server and local-path, the public tunnel, Postgres, monitoring,
+Keycloak) run on the cluster since 2026-11-24.
 
 ## Goal
 
@@ -34,9 +34,11 @@ monitoring stores at `mon.lan.buunk.org`. Pods reach the internet and
 ```
 clusters/hgd1/          # entry point: Flux itself and three Kustomizations
   flux-system/          #   written by flux bootstrap
-  infrastructure.yaml   #   → ./infrastructure
+  infrastructure.yaml   #   → ./infrastructure (controllers, operators)
   config.yaml           #   → ./config, dependsOn infrastructure
-  apps.yaml             #   → ./apps, dependsOn config
+  platform.yaml         #   → ./platform (shared services: Keycloak), dependsOn config
+  keycloak-realm.yaml   #   → ./platform/keycloak-realm, dependsOn platform
+  apps.yaml             #   → ./apps, dependsOn platform
 infrastructure/         # controllers, one folder each (HelmRepository + HelmRelease)
   metrics-server/  local-path/  cloudflared/  cert-manager/  cloudnative-pg/  monitoring/
 components/             # reusable pieces for apps, e.g. postgres (defaults and backups)
@@ -160,10 +162,34 @@ chart at the Cluster.
 
 ### 6. Keycloak
 
-- [ ] On a Postgres from the template, public at `auth.buunk.org` through
-      the tunnel.
-- [ ] A realm `hgd1` for my users; one OIDC client per app.
-- [ ] Done when: I can log in at `auth.buunk.org`.
+- [x] The official operator (26.8.2) from Keycloak's release manifests;
+      Keycloak in a `platform` layer (after `config`, before `apps`).
+- [x] Keycloak with 2 pods on different hosts, on its own Postgres with 3
+      servers (`keycloak-db`, backed up like every cluster).
+- [x] Public at `https://auth.buunk.org` through the tunnel; Cloudflare
+      terminates TLS. The admin console and the `master` realm are **not
+      public** (the tunnel answers 404); use
+      `kubectl -n keycloak port-forward svc/keycloak-service 8080` and
+      `http://localhost:8080/admin/` (port 8080 exactly).
+- [x] The realm `hgd1` from Git (`platform/keycloak-realm/hgd1.yaml`, applied
+      by keycloak-config-cli on every change): settings, brute-force
+      protection, password policy, groups `admins`, `family`, `friends`.
+- [x] **No people in Git.** Accounts and group membership are made in the
+      admin console. The first login is `temp-admin`, generated into a sops
+      Secret: read it with
+      `kubectl -n keycloak get secret keycloak-bootstrap-admin -o jsonpath='{.data.password}' | base64 -d`,
+      make your own admin in the `master` realm, then delete `temp-admin`.
+      keycloak-config-cli uses its own generated machine login.
+- [x] Done when: logins at `auth.buunk.org` work from the internet and stay
+      up while a node restarts, and the database restores from S3. Tested
+      2026-11-24: 288 of 288 requests answered while `hgd1-k8m02` (a
+      Keycloak pod and a database server) restarted; a restore had both
+      realms and the 3 groups.
+- [ ] Mail for password resets: [#3](https://github.com/jurrebuunk/hgd1-k8s/issues/3).
+
+**What lives where:** realm settings, clients, roles and which group gets
+which role are code (reviewed, in the app's commit); who is in which group
+is managed in the admin console.
 
 ### 7. Cloudreve, the first public app
 
