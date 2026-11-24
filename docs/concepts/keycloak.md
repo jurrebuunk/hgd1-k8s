@@ -45,8 +45,21 @@ every change, with its own machine login.
 | Redirect URI | The app's callback on its public hostname |
 | Permissions | The app reads groups or roles from the token; check that it can |
 
-Cloudreve can't use it yet: OIDC is a Pro feature there
-([hgd1-cloudreve#1](https://github.com/jurrebuunk/hgd1-cloudreve/issues/1)).
+A client's secret is a sops Secret next to the realm
+(`platform/keycloak-realm/client-<app>.sops.yaml`), put into the realm by
+keycloak-config-cli with `$(env:…)`; the app repo has the same value.
+
+### Apps using it
+
+| App | Client | Roles → groups |
+| --- | --- | --- |
+| Cloudreve | `cloudreve` | `admins` → `admin`; `family`, `friends` → `user`; no role, no access |
+
+Cloudreve's OIDC login is a Pro feature upstream; hgd1-cloudreve adds it with
+a patch to the open-source version (its README: *Login through Keycloak*).
+Someone who already had a Cloudreve account gets linked to it only when
+their email is marked **verified** here (Users → the user → *Email
+verified*).
 
 ### Mail
 
@@ -64,7 +77,8 @@ passwords.
 | `platform/keycloak/database.yaml` | `keycloak-db` |
 | `platform/keycloak/theme/` | The flatwork login theme |
 | `platform/keycloak/bootstrap-*.sops.yaml` | First admin and keycloak-config-cli's login |
-| `platform/keycloak-realm/hgd1.yaml`, `master.yaml` | The realms |
+| `platform/keycloak-realm/hgd1.yaml`, `master.yaml` | The realms, including the apps' clients and roles |
+| `platform/keycloak-realm/client-*.sops.yaml` | The apps' client secrets |
 
 ## Operating
 

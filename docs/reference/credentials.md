@@ -23,6 +23,8 @@ holds a value, only its location. How to add or rotate them:
 | `components/postgres/backup-s3.sops.yaml` | Key of S3 user `pg-backups` | Secret `pg-backup-s3` in each app namespace |
 | `platform/keycloak/bootstrap-admin.sops.yaml` | `temp-admin`'s first password | Secret `keycloak/keycloak-bootstrap-admin` |
 | `platform/keycloak/bootstrap-service.sops.yaml` | keycloak-config-cli's login | Secret in `keycloak` |
+| `platform/keycloak-realm/client-cloudreve.sops.yaml` | Secret of the Keycloak client `cloudreve` | Secret `keycloak/keycloak-client-cloudreve`, read by keycloak-config-cli |
+| `hgd1-cloudreve`: `deploy/oidc.sops.yaml` | The same client secret, for Cloudreve | Secret `cloudreve/cloudreve-oidc` |
 | `hgd1-cloudreve`: `deploy/s3-key.sops.yaml` | Key of S3 user `cloudreve` | Secret `cloudreve/cloudreve-s3` |
 | `hgd1-cloudreve`: `deploy/system.sops.yaml` | Cloudreve's session secret and link salt | Secret `cloudreve/cloudreve-system` |
 
@@ -32,7 +34,7 @@ holds a value, only its location. How to add or rotate them:
 | --- | --- |
 | Database passwords | Secret `<cluster>-app` per database (CloudNativePG) |
 | People's accounts | Keycloak, `keycloak-db` |
-| Cloudreve accounts | Cloudreve, `cloudreve-db` |
+| Cloudreve accounts | Cloudreve, `cloudreve-db`; people sign in through Keycloak, a local admin keeps a password |
 
 ## Keys
 

@@ -212,9 +212,10 @@ Lives in its own repo, [hgd1-cloudreve](https://github.com/jurrebuunk/hgd1-cloud
       `files-s3.buunk.org`: a gateway that passes only `/cloudreve` and
       fixes the Content-Type Ceph rejects. 25 MB chunks (Cloudflare's
       100 MB request limit). CORS set by Cloudreve for its origin.
-- [ ] Login through Keycloak: Pro-only in Cloudreve,
-      [hgd1-cloudreve#1](https://github.com/jurrebuunk/hgd1-cloudreve/issues/1).
-      Own accounts for now, registration off.
+- [x] Login through Keycloak: Pro-only upstream, so hgd1-cloudreve builds
+      its own image with an OIDC patch (`image/`). Client `cloudreve` here,
+      roles `admin`/`user` per group. Registration stays off; a local admin
+      keeps a password.
 - [ ] Mail (password resets): [#4](https://github.com/jurrebuunk/hgd1-k8s/issues/4).
 - [ ] Done when: from outside the network I log in, upload a file over
       100 MB, download it, and see it in `labctl s3 bucket show cloudreve`.
