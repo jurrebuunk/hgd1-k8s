@@ -1,7 +1,8 @@
 # Plan
 
-Where this repo is going, so I can pick it up from here. Steps 1 (Flux and
-sops) and 2 (metrics-server, local-path) run on the cluster since 2026-11-24.
+Where this repo is going, so I can pick it up from here. Steps 1–3 (Flux and
+sops, metrics-server and local-path, the public tunnel) run on the cluster
+since 2026-11-24.
 
 ## Goal
 
@@ -69,17 +70,26 @@ Each step ends with something to check.
 
 ### 3. Public access: Cloudflare Tunnel
 
-- [ ] A tunnel `hgd1-apps` (separate from `hgd1-admin`, the hosts' WARP
-      tunnel); its credentials sops-encrypted here.
-- [ ] `cloudflared` with three replicas, one per zone.
-- [ ] Its routes ("hostname → Service") in Git, so publishing an app is a
-      commit.
-- [ ] DNS: a wildcard `*.buunk.org` → the tunnel; explicit records (like
-      everything under `lan.buunk.org`) still win.
-- [ ] Cloudflare terminates TLS: no cert-manager, load balancer IPs or ingress
-      controller for public apps.
-- [ ] Done when: a test page at `test.buunk.org` answers from the internet and
-      stays up while one node is drained.
+- [x] A tunnel `hgd1-apps` (`464b884a-410d-4066-8946-0532c41f1978`,
+      separate from `hgd1-admin`, the hosts' WARP tunnel); its credentials
+      sops-encrypted in `infrastructure/cloudflared/`.
+- [x] `cloudflared` with three replicas, one per zone, at most one down at a
+      time.
+- [x] Its routes ("hostname → Service") in Git
+      (`infrastructure/cloudflared/config.yaml`); a change rolls cloudflared.
+- [x] DNS: one proxied CNAME per hostname → `<tunnel id>.cfargotunnel.com`.
+      A wildcard `*.buunk.org` isn't possible (it has MX records). Made by
+      hand for now; external-dns is
+      [#1](https://github.com/jurrebuunk/hgd1-k8s/issues/1).
+- [x] Cloudflare terminates TLS: no cert-manager, load balancer IPs or
+      ingress controller for public apps.
+- [x] Done when: `https://test.buunk.org` answers from the internet and
+      stays up while one node is drained. Tested 2026-11-24: 247 of 247
+      requests succeeded while `hgd1-k8m01` was drained and restarted.
+
+**Publishing an app:** a route in `infrastructure/cloudflared/config.yaml`
+(`hostname: x.buunk.org`, `service: http://<svc>.<ns>.svc.cluster.local:<port>`)
+and its CNAME.
 
 ### 4. Postgres: CloudNativePG
 
@@ -141,7 +151,7 @@ Each step ends with something to check.
 | Step | Where | What |
 | --- | --- | --- |
 | 2 | `nix-hgd1-cluster` | `metrics-server` and `local-storage` disabled in k3s |
-| 3 | Cloudflare | The tunnel `hgd1-apps` and the wildcard record |
+| 3 | Cloudflare | The tunnel `hgd1-apps` (done) and a DNS token for external-dns (#1) |
 | 4, 7 | `labctl` | S3 users and buckets (needs the RGW cap for `clusterd`) |
 | 5 | `hgd1-network` | Firewall: k8s VLAN → `10.10.20.10` on 8428 and 9428 |
 
