@@ -1,0 +1,7 @@
+# Let kustomize put the config map's hashed name into the Keycloak resource,
+# so a theme change gives the pods a new map and rolls them.
+nameReference:
+  - kind: ConfigMap
+    fieldSpecs:
+      - kind: Keycloak
+        path: spec/unsupported/podTemplate/spec/volumes/configMap/name

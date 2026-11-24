@@ -39,3 +39,25 @@ spec:
   resources:
     requests: { cpu: 100m, memory: 640Mi }
     limits: { memory: 1Gi }
+  # The login theme flatwork from the config map keycloak-theme.
+  unsupported:
+    podTemplate:
+      spec:
+        containers:
+          - volumeMounts:
+              - { name: theme-flatwork, mountPath: /opt/keycloak/themes/flatwork, readOnly: true }
+        volumes:
+          - name: theme-flatwork
+            configMap:
+              name: keycloak-theme
+              items:
+                - { key: theme.properties, path: login/theme.properties }
+                - { key: template.ftl, path: login/template.ftl }
+                - { key: login.ftl, path: login/login.ftl }
+                - { key: messages_en.properties, path: login/messages/messages_en.properties }
+                - { key: flatwork.css, path: login/resources/css/flatwork.css }
+                - { key: favicon.svg, path: login/resources/img/favicon.svg }
+                - { key: geist-400.woff2, path: login/resources/fonts/geist-400.woff2 }
+                - { key: geist-500.woff2, path: login/resources/fonts/geist-500.woff2 }
+                - { key: geist-600.woff2, path: login/resources/fonts/geist-600.woff2 }
+                - { key: plex-mono-400.woff2, path: login/resources/fonts/plex-mono-400.woff2 }

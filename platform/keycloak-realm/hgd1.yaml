@@ -4,7 +4,9 @@
 # roles and clients it manages are removed when deleted here.
 realm: hgd1
 enabled: true
-displayName: hgd1
+displayName: buunk
+loginTheme: flatwork
+rememberMe: true
 registrationAllowed: false
 resetPasswordAllowed: false # no mail server yet
 loginWithEmailAllowed: true

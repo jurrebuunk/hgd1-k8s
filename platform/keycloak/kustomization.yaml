@@ -8,3 +8,19 @@ resources:
   - keycloak.yaml
 components:
   - ../../components/postgres
+# The login theme flatwork (theme/), mounted into Keycloak by keycloak.yaml.
+configMapGenerator:
+  - name: keycloak-theme
+    files:
+      - theme/theme.properties
+      - theme/template.ftl
+      - theme/login.ftl
+      - theme/messages_en.properties
+      - theme/flatwork.css
+      - theme/favicon.svg
+      - theme/geist-400.woff2
+      - theme/geist-500.woff2
+      - theme/geist-600.woff2
+      - theme/plex-mono-400.woff2
+configurations:
+  - kustomizeconfig.yaml
