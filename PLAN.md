@@ -226,6 +226,25 @@ Lives in its own repo, [hgd1-cloudreve](https://github.com/jurrebuunk/hgd1-cloud
       brings its manifests, `apps/` points Flux at it, images from GHCR roll
       out through Flux's image automation.
 
+### 9. Intranet, the people hub
+
+My own app, in its own repo, behind Keycloak: one place where people see
+their profile and the apps they can use, a bit like Keycloak's account
+console but ours. Keycloak stays where accounts and passwords live.
+
+- [ ] Intranet app: sign in through Keycloak, show the profile and links
+      to the apps the person has a role for.
+- [ ] Profile picture upload: the image in its own S3 bucket, served at a
+      public URL; the intranet writes that URL into the Keycloak user's
+      `picture` attribute (through its own service client).
+- [ ] Realm: user-profile attribute `picture`, `https://` only, set by the
+      intranet and read-only for people in the account console. Clients
+      that request `profile` get it as the `picture` claim.
+- [ ] Then Cloudreve shows it as the avatar: a patch that takes the
+      `picture` claim at sign-in and redirects to it, without downloading
+      it ([hgd1-cloudreve#2](https://github.com/jurrebuunk/hgd1-cloudreve/issues/2)).
+      Also fixes Cloudreve's own uploaded avatars being lost on restart.
+
 ## Needed from other repos
 
 | Step | Where | What |
