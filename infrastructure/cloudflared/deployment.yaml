@@ -18,6 +18,7 @@ spec:
   template:
     metadata:
       labels: { app: cloudflared }
+      annotations: { prometheus.io/scrape: "true", prometheus.io/port: "2000" }
     spec:
       topologySpreadConstraints:
         - maxSkew: 1

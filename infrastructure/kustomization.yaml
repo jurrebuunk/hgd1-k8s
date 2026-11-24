@@ -6,3 +6,4 @@ resources:
   - cloudflared
   - cert-manager/release.yaml
   - cloudnative-pg/release.yaml
+  - monitoring/release.yaml

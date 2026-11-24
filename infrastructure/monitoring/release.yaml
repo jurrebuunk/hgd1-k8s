@@ -1,0 +1,133 @@
+# Monitoring of k3s (plan step 5): metrics and pod logs go to the hosts'
+# VictoriaMetrics and VictoriaLogs over the storage network (each host's
+# storage IP, so a host that's down catches up later), like the VMs' own
+# logs. Everything is labelled cluster=hgd1-k8s (metrics) or carries the
+# node as host and the container as unit (logs, as labctl logs expects).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata: { name: victoriametrics, namespace: monitoring }
+spec: { url: https://victoriametrics.github.io/helm-charts, interval: 12h }
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata: { name: vector, namespace: monitoring }
+spec: { url: https://helm.vector.dev, interval: 12h }
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata: { name: prometheus-community, namespace: monitoring }
+spec: { url: https://prometheus-community.github.io/helm-charts, interval: 12h }
+---
+# Object state (pods, deployments, PVCs) as metrics.
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata: { name: kube-state-metrics, namespace: monitoring }
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: kube-state-metrics
+      version: 9.0.0
+      sourceRef: { kind: HelmRepository, name: prometheus-community }
+  install: { remediation: { retries: 3 } }
+  upgrade: { remediation: { retries: 3 } }
+  values:
+    prometheusScrape: true
+    resources: { requests: { cpu: 10m, memory: 48Mi } }
+---
+# Scrapes kubelets, cAdvisor and every pod or service annotated with
+# prometheus.io/scrape, and writes to all three hosts.
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata: { name: vmagent, namespace: monitoring }
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: victoria-metrics-agent
+      version: 0.51.0 # vmagent v1.155.0
+      sourceRef: { kind: HelmRepository, name: victoriametrics }
+  install: { remediation: { retries: 3 } }
+  upgrade: { remediation: { retries: 3 } }
+  values:
+    remoteWrite:
+      - url: http://10.10.30.11:8428/api/v1/write
+      - url: http://10.10.30.12:8428/api/v1/write
+      - url: http://10.10.30.13:8428/api/v1/write
+    extraArgs:
+      envflag.enable: true
+      envflag.prefix: VM_
+      loggerFormat: json
+      remoteWrite.label: cluster=hgd1-k8s
+    resources:
+      requests: { cpu: 50m, memory: 128Mi }
+      limits: { memory: 512Mi }
+---
+# Pod logs from every node.
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata: { name: vector, namespace: monitoring }
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: vector
+      version: 0.61.0
+      sourceRef: { kind: HelmRepository, name: vector }
+  install: { remediation: { retries: 3 } }
+  upgrade: { remediation: { retries: 3 } }
+  values:
+    role: Agent
+    tolerations:
+      - operator: Exists # every node, servers included
+    persistence:
+      hostPath: { path: /var/lib/vector-k8s } # /var/lib/vector is the VM's own Vector
+    # kubelet keeps pod logs here (the VM's root is tmpfs); Vector reads
+    # /var/log/pods.
+    extraVolumes:
+      - name: pod-logs
+        hostPath: { path: /var/lib/kubelet-pod-logs }
+    extraVolumeMounts:
+      - { name: pod-logs, mountPath: /var/log/pods, readOnly: true }
+    resources:
+      requests: { cpu: 20m, memory: 64Mi }
+      limits: { memory: 256Mi }
+    customConfig:
+      data_dir: /vector-data-dir
+      api: { enabled: false }
+      sources:
+        pods: { type: kubernetes_logs }
+      transforms:
+        normalized:
+          type: remap
+          inputs: [pods]
+          source: |
+            .host = .kubernetes.pod_node_name
+            .unit = .kubernetes.container_name
+            .namespace = .kubernetes.pod_namespace
+            .pod = .kubernetes.pod_name
+            .cluster = "hgd1-k8s"
+            del(.kubernetes)
+            del(.file)
+      sinks:
+        victorialogs_0: &sink
+          type: elasticsearch
+          inputs: [normalized]
+          endpoints: ["http://10.10.30.11:9428/insert/elasticsearch/"]
+          mode: bulk
+          api_version: v8
+          healthcheck: { enabled: false }
+          compression: gzip
+          query: { _msg_field: message, _time_field: timestamp, _stream_fields: "host,unit" }
+          buffer: { type: disk, max_size: 268435488, when_full: drop_newest }
+        victorialogs_1:
+          <<: *sink
+          endpoints: ["http://10.10.30.12:9428/insert/elasticsearch/"]
+        victorialogs_2:
+          <<: *sink
+          endpoints: ["http://10.10.30.13:9428/insert/elasticsearch/"]

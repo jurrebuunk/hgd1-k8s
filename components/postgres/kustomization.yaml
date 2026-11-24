@@ -33,6 +33,8 @@ patches:
             isWALArchiver: true
             parameters:
               barmanObjectName: pg-backups
+        inheritedMetadata:
+          annotations: { prometheus.io/scrape: "true", prometheus.io/port: "9187" }
         resources:
           requests: { cpu: 50m, memory: 256Mi }
           limits: { memory: 512Mi }
