@@ -74,4 +74,4 @@ kubectl -n <ns> get backups
 
 | You see | Likely cause |
 | --- | --- |
-| Loads but shows no data | The pod can't reach `10.10.20.20:443` (router rule, [network firewall](https://jurrebuunk.github.io/hgd1-network/firewall/)), or its `operator` token is revoked |
+| Loads but shows no data | The pod can't reach `10.10.20.20:443` (router rule, [network firewall](https://jurrebuunk.github.io/hgd1-network/reference/firewall/)), or its `operator` token is revoked |
