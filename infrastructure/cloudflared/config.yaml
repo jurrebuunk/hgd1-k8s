@@ -1,0 +1,9 @@
+# The tunnel's routes: publishing an app is a line here plus its DNS record
+# (a proxied CNAME <name>.buunk.org → <tunnel id>.cfargotunnel.com). A
+# wildcard record isn't possible: *.buunk.org has MX records.
+tunnel: 464b884a-410d-4066-8946-0532c41f1978 # hgd1-apps
+credentials-file: /etc/cloudflared/credentials/credentials.json
+ingress:
+  - hostname: test.buunk.org
+    service: http://whoami.test-page.svc.cluster.local:80
+  - service: http_status:404

@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - metrics-server/release.yaml
   - local-path/release.yaml
+  - cloudflared

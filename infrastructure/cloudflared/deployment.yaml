@@ -1,0 +1,67 @@
+# Public access (plan step 3): cloudflared runs the tunnel hgd1-apps, one
+# replica per zone, so the public apps stay up while a host is down.
+# Cloudflare terminates TLS; routes are in config.yaml next to this file.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloudflared
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflared
+  namespace: cloudflared
+spec:
+  replicas: 3
+  selector:
+    matchLabels: { app: cloudflared }
+  template:
+    metadata:
+      labels: { app: cloudflared }
+    spec:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels: { app: cloudflared }
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: cloudflared
+          image: cloudflare/cloudflared:2026.10.7
+          args: [tunnel, --config, /etc/cloudflared/config.yaml, --metrics, "0.0.0.0:2000", --no-autoupdate, run]
+          ports:
+            - { name: metrics, containerPort: 2000 }
+          livenessProbe:
+            httpGet: { path: /ready, port: 2000 }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          resources:
+            requests: { cpu: 20m, memory: 48Mi }
+            limits: { memory: 192Mi }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: [ALL] }
+          volumeMounts:
+            - { name: config, mountPath: /etc/cloudflared/config.yaml, subPath: config.yaml, readOnly: true }
+            - { name: credentials, mountPath: /etc/cloudflared/credentials, readOnly: true }
+      volumes:
+        - name: config
+          configMap: { name: cloudflared-config }
+        - name: credentials
+          secret: { secretName: cloudflared-credentials }
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: cloudflared
+  namespace: cloudflared
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels: { app: cloudflared }
