@@ -228,12 +228,35 @@ Lives in its own repo, [hgd1-cloudreve](https://github.com/jurrebuunk/hgd1-cloud
 
 ### 9. Intranet, the people hub
 
-My own app, in its own repo, behind Keycloak: one place where people see
-their profile and the apps they can use, a bit like Keycloak's account
-console but ours. Keycloak stays where accounts and passwords live.
+My own app, in its own repo, behind Keycloak: a hub for people. Everyone
+sees their profile and the apps they can use, a bit like Keycloak's account
+console but ours, and each person can make their own corner of it. Keycloak
+stays where accounts and passwords live.
+
+**Two layers, so the intranet stays clean:**
+
+| Shared (the same for everyone) | Personal (each person's own) |
+| --- | --- |
+| Profile, apps the person has a role for, nothing else | Start page, quick links, own pages with embedded sites and tools |
+| Defined by me | Made by the person, visible only to them |
+
+Personal things never show up in the shared navigation or for other people.
 
 - [ ] Intranet app: sign in through Keycloak, show the profile and links
       to the apps the person has a role for.
+- [ ] **Browser start page:** a personal page a person sets as their
+      browser's home or new-tab page. A DuckDuckGo search bar (a plain form
+      to `https://duckduckgo.com/`, no tracking of searches on our side),
+      their apps and their own quick links, arranged by them. It has to load
+      fast and keep them signed in for a long time, since it opens with
+      every browser window.
+- [ ] **Own pages:** a person makes pages for their own needs and embeds
+      sites or small tools in them, for example an issue tracker for my job
+      next to the things I use with it. Embedded content runs in a
+      sandboxed iframe (`sandbox`, its own origin) so it can't touch the
+      intranet's session. Many sites refuse to be framed
+      (`X-Frame-Options`, CSP `frame-ancestors`); those become a link card
+      instead.
 - [ ] Profile picture upload: the image in its own S3 bucket, served at a
       public URL; the intranet writes that URL into the Keycloak user's
       `picture` attribute (through its own service client).
