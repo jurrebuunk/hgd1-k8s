@@ -45,7 +45,7 @@ labctl logs --since 30m 'namespace:<ns>'
 | --- | --- |
 | Cloudflare error 1033 | No cloudflared connected: `kubectl -n cloudflared get pods`, their logs |
 | 404 from the tunnel | No route for that hostname or path (or the route blocks it on purpose); check `infrastructure/cloudflared/config.yaml` |
-| Hostname doesn't resolve | Its proxied CNAME is missing ([Public access](../concepts/public-access.md#publishing-an-app)) |
+| Hostname doesn't resolve | Its proxied CNAME is missing ([Publish an app](../how-to/publish-an-app.md#2-add-the-dns-record)) |
 | 502 | The Service has no ready endpoints, or the route points at the wrong port |
 | 413 on upload | Over the 100 MB request limit; upload in chunks |
 

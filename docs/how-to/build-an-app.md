@@ -132,8 +132,8 @@ spec:
 ```
 
 The app reads the Secret `notes-db-app` (key `uri`) and connects to
-`notes-db-rw`. Never a Helm chart's built-in Postgres. The details, backups
-and restores: [Postgres](../concepts/postgres.md).
+`notes-db-rw`. Never a Helm chart's built-in Postgres. Step by step:
+[Add a database](add-a-database.md).
 
 ## Logins
 
@@ -158,7 +158,7 @@ More: [Keycloak](../concepts/keycloak.md).
 Public apps go out through a Cloudflare Tunnel that runs in the cluster: a
 route "hostname → Service" in this repo plus a DNS record publishes it,
 Cloudflare handles TLS, and no port on the network is opened
-([Public access](../concepts/public-access.md)). Apps that need a login
+([Publish an app](publish-an-app.md)). Apps that need a login
 use Keycloak (`auth.buunk.org`) over OIDC. The first one is Cloudreve
 (`cloudreve.buunk.org`).
 

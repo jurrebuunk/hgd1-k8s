@@ -14,7 +14,14 @@ copyright = "Jurre Buunk"
 
 nav = [
   { "Home" = "index.md" },
+  { "Get started" = [
+    "get-started/index.md",
+    "get-started/access.md",
+    "get-started/first-change.md",
+    "get-started/repository.md",
+  ] },
   { "Concepts" = [
+    "concepts/index.md",
     "concepts/gitops.md",
     "concepts/public-access.md",
     "concepts/postgres.md",
@@ -23,11 +30,23 @@ nav = [
     "concepts/web-ui.md",
   ] },
   { "How-to" = [
+    "how-to/index.md",
     "how-to/build-an-app.md",
+    "how-to/publish-an-app.md",
+    "how-to/add-a-database.md",
     "how-to/manage-secrets.md",
   ] },
   { "Operate" = [
+    "operate/index.md",
     "operate/troubleshooting.md",
+  ] },
+  { "Reference" = [
+    "reference/index.md",
+    "reference/components.md",
+    "reference/routes.md",
+    "reference/credentials.md",
+    "reference/glossary.md",
+    { "Plan ↗" = "https://github.com/jurrebuunk/hgd1-k8s/blob/main/PLAN.md" },
   ] },
   # The other two doc sites, in their own colour.
   { "Cluster docs ↗" = "https://jurrebuunk.github.io/nix-hgd1-cluster/" },

@@ -21,53 +21,53 @@ The hgd1 docs are three sites, each covering only what its repo owns:
 
 <div class="grid cards" markdown>
 
--   :lucide-git-branch:{ .lg .middle } **GitOps**
+-   :lucide-rocket:{ .lg .middle } **Get started**
 
     ---
 
-    How Flux applies this repo and the app repos, layer by layer.
+    A kubeconfig, your first change through Flux, and a tour of the repo.
 
-    [:octicons-arrow-right-24: GitOps](concepts/gitops.md)
+    [:octicons-arrow-right-24: Get started](get-started/index.md)
 
--   :lucide-hammer:{ .lg .middle } **Build an app**
-
-    ---
-
-    What the platform gives an app, where its data goes, and the checklist.
-
-    [:octicons-arrow-right-24: Build an app](how-to/build-an-app.md)
-
--   :lucide-globe:{ .lg .middle } **Public access**
+-   :lucide-lightbulb:{ .lg .middle } **Concepts**
 
     ---
 
-    The Cloudflare Tunnel: a route and a DNS record publish an app.
+    GitOps, public access, Postgres, Keycloak and monitoring, and why.
 
-    [:octicons-arrow-right-24: Public access](concepts/public-access.md)
+    [:octicons-arrow-right-24: Concepts](concepts/index.md)
 
--   :lucide-database:{ .lg .middle } **Postgres**
-
-    ---
-
-    One small CloudNativePG cluster per app, backed up to S3.
-
-    [:octicons-arrow-right-24: Postgres](concepts/postgres.md)
-
--   :lucide-key-round:{ .lg .middle } **Keycloak**
+-   :lucide-wrench:{ .lg .middle } **How-to guides**
 
     ---
 
-    Logins for apps at `auth.buunk.org`.
+    Build and publish an app, add a database, manage secrets.
 
-    [:octicons-arrow-right-24: Keycloak](concepts/keycloak.md)
+    [:octicons-arrow-right-24: How-to](how-to/index.md)
 
--   :lucide-activity:{ .lg .middle } **Monitoring**
+-   :lucide-heart-pulse:{ .lg .middle } **Operate**
 
     ---
 
-    Pod logs and metrics, into the same stores as the hosts'.
+    The health check, ground rules, schedule and state outside Git.
 
-    [:octicons-arrow-right-24: Monitoring](concepts/monitoring.md)
+    [:octicons-arrow-right-24: Operate](operate/index.md)
+
+-   :lucide-book-open:{ .lg .middle } **Reference**
+
+    ---
+
+    Components and versions, routes and apps, credentials, the plan.
+
+    [:octicons-arrow-right-24: Reference](reference/index.md)
+
+-   :lucide-life-buoy:{ .lg .middle } **Troubleshooting**
+
+    ---
+
+    Find the fix by symptom: Flux, pods, the tunnel, Postgres, Keycloak.
+
+    [:octicons-arrow-right-24: Troubleshooting](operate/troubleshooting.md)
 
 </div>
 
@@ -86,7 +86,7 @@ flowchart LR
 | Part | Status | Read |
 | --- | --- | --- |
 | Flux and sops | <span class="status">Done</span> | [GitOps](concepts/gitops.md), [Manage secrets](how-to/manage-secrets.md) |
-| metrics-server, local-path | <span class="status">Done</span> | [GitOps](concepts/gitops.md#what-runs-here) |
+| metrics-server, local-path | <span class="status">Done</span> | [Components](reference/components.md) |
 | Public access (tunnel `hgd1-apps`) | <span class="status">Done</span> | [Public access](concepts/public-access.md) |
 | Postgres (CloudNativePG, S3 backups) | <span class="status">Done</span> | [Postgres](concepts/postgres.md) |
 | Monitoring of pods | <span class="status">Done</span> | [Monitoring](concepts/monitoring.md) |
@@ -95,19 +95,14 @@ flowchart LR
 | Web UI (`lab-console`) | <span class="status status--planned">Planned</span> | [Web UI](concepts/web-ui.md) |
 | Local ingress (LAN-only services) | <span class="status status--planned">Later</span> | [PLAN.md](https://github.com/jurrebuunk/hgd1-k8s/blob/main/PLAN.md#later) |
 
-## Apps
-
-| App | Address | Repo |
-| --- | --- | --- |
-| Cloudreve | <https://cloudreve.buunk.org> | [`hgd1-cloudreve`](https://github.com/jurrebuunk/hgd1-cloudreve) |
-
 ## I want to…
 
 | … | Go to |
 | --- | --- |
 | run a new app | [Build an app](how-to/build-an-app.md) |
-| put an app on the internet | [Public access](concepts/public-access.md) |
-| give an app a database | [Postgres](concepts/postgres.md) |
+| put an app on the internet | [Publish an app](how-to/publish-an-app.md) |
+| see every public hostname and app | [Routes and apps](reference/routes.md) |
+| give an app a database | [Add a database](how-to/add-a-database.md) |
 | let people log in to an app | [Keycloak](concepts/keycloak.md) |
 | add or change a secret | [Manage secrets](how-to/manage-secrets.md) |
 | see an app's logs or metrics | [Monitoring](concepts/monitoring.md) |

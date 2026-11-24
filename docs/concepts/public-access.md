@@ -10,12 +10,21 @@ TLS and sends requests through the tunnel to a Kubernetes Service. No port
 on the network is opened, and there's no ingress controller or certificate
 for public apps.
 
+!!! cluster "On the cluster docs: remote access"
+
+    The other tunnel, `hgd1-admin` on the hosts, which WARP uses for admin
+    access to the network.
+
+    [Remote access](https://jurrebuunk.github.io/nix-hgd1-cluster/concepts/remote-access/){ .md-button }
+
 !!! info "At a glance"
 
     **Status** <span class="status">Done</span> · **Tunnel** `hgd1-apps`
     (`464b884a-410d-4066-8946-0532c41f1978`) · **Routes**
-    `infrastructure/cloudflared/config.yaml` · **DNS** one proxied CNAME per
-    hostname
+    `infrastructure/cloudflared/config.yaml` · **Current routes**
+    [Routes and apps](../reference/routes.md) · **How-to** [Publish an app](../how-to/publish-an-app.md)
+
+## Overview
 
 ```mermaid
 flowchart LR
@@ -24,65 +33,55 @@ flowchart LR
   cfd -- route by hostname/path --> svc[Service in the app's namespace]
 ```
 
-This tunnel is separate from `hgd1-admin`, the tunnel on the hosts that
-WARP uses for admin access to the network.
+## How it works
 
-!!! cluster "On the cluster docs: remote access"
+### Routes
 
-    The admin tunnel `hgd1-admin` and WARP, for reaching the LAN from the
-    laptop.
+`cloudflared` reads an ingress list: each entry matches a hostname (and
+optionally a path regex) and names a Service. The last entry answers 404 for
+everything else. A route with `service: http_status:404` blocks a path, as
+for Keycloak's admin console.
 
-    [Remote access](https://jurrebuunk.github.io/nix-hgd1-cluster/concepts/remote-access/){ .md-button }
+### DNS
 
-## Publishing an app
+Every hostname needs a **proxied** CNAME in the `buunk.org` zone to
+`<tunnel id>.cfargotunnel.com`. A wildcard `*.buunk.org` isn't possible (the
+zone has MX records), so it's one record per hostname, made by hand for now
+([external-dns: #1](https://github.com/jurrebuunk/hgd1-k8s/issues/1)).
 
-Two steps, both needed:
+### Limits
 
-1. **A route** in `infrastructure/cloudflared/config.yaml`, above the final
-   `http_status:404`:
-
-    ```yaml
-    - hostname: notes.buunk.org
-      service: http://notes.notes.svc.cluster.local:80
-    ```
-
-    A `path:` (regex) narrows a route; a route with `service: http_status:404`
-    blocks a path, as for Keycloak's admin console. The config is generated
-    into a ConfigMap with a hash, so a change rolls cloudflared by itself.
-
-2. **A DNS record** in the `buunk.org` zone: a **proxied** CNAME
-   `notes.buunk.org` → `464b884a-410d-4066-8946-0532c41f1978.cfargotunnel.com`.
-   Made by hand (dashboard or API) for now;
-   [external-dns](https://github.com/jurrebuunk/hgd1-k8s/issues/1) would make
-   it from the routes. A wildcard `*.buunk.org` isn't possible: the zone has
-   MX records.
-
-Removing an app: delete its route and its DNS record.
-
-## Current routes
-
-| Hostname | To | Notes |
-| --- | --- | --- |
-| `auth.buunk.org` | Keycloak | `/admin` and `/realms/master` answer 404 |
-| `cloudreve.buunk.org` | Cloudreve | |
-| `files-s3.buunk.org` | Cloudreve's S3 gateway | Only `/cloudreve/…` (the bucket); everything else 404 |
-
-## Limits
-
-- **100 MB per request** on the free plan. Apps that upload large files must
+- **100 MB per request** on the free plan: apps that upload large files must
   upload in chunks (Cloudreve: 25 MB).
-- **No unsigned Content-Type on presigned S3 uploads** is a Ceph rule, not a
-  tunnel one; see the gateway in
-  [hgd1-cloudreve](https://github.com/jurrebuunk/hgd1-cloudreve#readme) if
-  browsers upload straight to a bucket.
-- Bots: Cloudflare may answer 403 to unusual clients (scripts with a default
-  user agent). Test with a browser user agent.
+- **Bots:** Cloudflare may answer 403 to scripts with a default user agent;
+  test with a browser user agent.
 
-## Availability
+## Configuration
 
-Three cloudflared pods, one per zone, at most one down at a time. Tested:
+| File | Owns |
+| --- | --- |
+| `infrastructure/cloudflared/config.yaml` | The routes; generated into a ConfigMap with a hash, so a change rolls cloudflared |
+| `infrastructure/cloudflared/deployment.yaml` | Three replicas, one per zone, at most one down |
+| `infrastructure/cloudflared/credentials.sops.yaml` | The tunnel's credentials |
+
+## Operating
+
+```sh
+kubectl -n cloudflared get pods -o wide        # three, on three hosts
+labctl logs --unit cloudflared --since 30m     # connections and route errors
+```
+
+The tunnel's health is also in the Cloudflare dashboard: Zero Trust →
+Networks → Tunnels → `hgd1-apps`.
+
+## Troubleshooting
+
+See [Troubleshooting → Public access](../operate/troubleshooting.md#public-access).
+
+## Tested
+
 247 of 247 requests succeeded while a node was drained and restarted.
 
 ## Related
 
-- [Build an app](../how-to/build-an-app.md#exposing) · [Keycloak](keycloak.md)
+- [Publish an app](../how-to/publish-an-app.md) · [Routes and apps](../reference/routes.md) · [Keycloak](keycloak.md)

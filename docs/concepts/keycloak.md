@@ -18,52 +18,25 @@ account for every app.
 
 | Part | Detail |
 | --- | --- |
-| Keycloak | 2 pods in different zones, namespace `keycloak` (`platform/keycloak/`) |
+| Keycloak | 2 pods in different zones, namespace `keycloak` |
 | Database | `keycloak-db`, its own Postgres with 3 servers, backed up like every [cluster](postgres.md) |
-| Realm `hgd1` | From Git (`platform/keycloak-realm/hgd1.yaml`), applied by keycloak-config-cli on every change: settings, brute-force protection, password policy, groups `admins`, `family`, `friends` |
-| Realm `master` | Only for administrators; its address is `http://localhost:8080` (`master.yaml`), so it only works through the port-forward |
+| Realm `hgd1` | For people and apps: settings, brute-force protection, password policy, groups `admins`, `family`, `friends` |
+| Realm `master` | Only for administrators; its address is `http://localhost:8080`, so it only works through the port-forward |
 | Public | Through the [tunnel](public-access.md); `/admin` and `/realms/master` answer 404 there |
-| Theme | `flatwork` (`platform/keycloak/theme/`): the flatwork-saas design language, dark by default, light from the system |
+| Theme | `flatwork`: the flatwork-saas design language, dark by default, light from the system |
 
-## What lives where
+## How it works
+
+### What lives where
 
 | In Git (reviewed, with the app) | In the admin console |
 | --- | --- |
 | Realm settings, an app's client (ID, redirect addresses, roles), which group gets which role | People: accounts and which groups they're in |
 
-There are no people in Git. An app's client is added to
-`platform/keycloak-realm/hgd1.yaml` in the same change that publishes the
-app; its secret as a sops Secret.
+There are no people in Git. keycloak-config-cli applies the realm files on
+every change, with its own machine login.
 
-## The admin console
-
-```sh
-kubectl -n keycloak port-forward svc/keycloak-service 8080
-```
-
-Then <http://localhost:8080/admin/>, port 8080 exactly (the `master` realm's
-address). Log in with your own admin account in `master`.
-
-**First time only:** Keycloak starts with `temp-admin`, whose password is a
-generated sops Secret:
-
-```sh
-kubectl -n keycloak get secret keycloak-bootstrap-admin -o jsonpath='{.data.password}' | base64 -d; echo
-```
-
-Make your own admin in `master` (role `admin`), log in with it, and delete
-`temp-admin`. keycloak-config-cli uses its own machine login, not this one.
-
-## Adding a person
-
-Admin console → realm `hgd1` → Users → Add user, then Credentials (a
-temporary password) and Groups. Mail isn't set up yet, so there are no
-password-reset or verification emails
-([#3](https://github.com/jurrebuunk/hgd1-k8s/issues/3),
-[#4](https://github.com/jurrebuunk/hgd1-k8s/issues/4)): an admin sets new
-passwords.
-
-## Connecting an app
+### Connecting an app
 
 | Setting | Value |
 | --- | --- |
@@ -74,6 +47,52 @@ passwords.
 
 Cloudreve can't use it yet: OIDC is a Pro feature there
 ([hgd1-cloudreve#1](https://github.com/jurrebuunk/hgd1-cloudreve/issues/1)).
+
+### Mail
+
+Not set up yet, so there are no password-reset or verification emails
+([#3](https://github.com/jurrebuunk/hgd1-k8s/issues/3),
+[#4](https://github.com/jurrebuunk/hgd1-k8s/issues/4)): an admin sets new
+passwords.
+
+## Configuration
+
+| File | Owns |
+| --- | --- |
+| `infrastructure/keycloak-operator/` | The operator and its CRDs |
+| `platform/keycloak/keycloak.yaml` | Keycloak: instances, hostname, theme |
+| `platform/keycloak/database.yaml` | `keycloak-db` |
+| `platform/keycloak/theme/` | The flatwork login theme |
+| `platform/keycloak/bootstrap-*.sops.yaml` | First admin and keycloak-config-cli's login |
+| `platform/keycloak-realm/hgd1.yaml`, `master.yaml` | The realms |
+
+## Operating
+
+**Admin console:**
+
+```sh
+kubectl -n keycloak port-forward svc/keycloak-service 8080
+```
+
+Then <http://localhost:8080/admin/>, port 8080 exactly. Log in with your own
+admin account in `master`.
+
+**First time only:** Keycloak starts with `temp-admin`, whose password is a
+generated sops Secret:
+
+```sh
+kubectl -n keycloak get secret keycloak-bootstrap-admin -o jsonpath='{.data.password}' | base64 -d; echo
+```
+
+Make your own admin in `master` (role `admin`), log in with it, and delete
+`temp-admin`.
+
+**Adding a person:** realm `hgd1` → Users → Add user, then Credentials (a
+temporary password) and Groups.
+
+## Troubleshooting
+
+See [Troubleshooting → Keycloak](../operate/troubleshooting.md#keycloak).
 
 ## Tested
 

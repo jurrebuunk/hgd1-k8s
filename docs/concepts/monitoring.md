@@ -43,11 +43,21 @@ flowchart LR
 | kube-state-metrics | Object state: pods, deployments, nodes | Scraped by vmagent in its own job (`honor_labels`, so its `namespace` and `pod` labels stay) |
 | Vector (DaemonSet) | Every container's output, from the node's pod log folder | All three hosts' VictoriaLogs; `host` = node, `unit` = container, plus `namespace` and `pod` |
 
+## How it works
+
 Both write to each host's storage IP over the storage VLAN, the way the
 VMs ship their own logs: no router rule, and a host that is down catches up
 from the collectors' buffers.
 
-## An app's metrics and logs
+## Configuration
+
+| File | Owns |
+| --- | --- |
+| `infrastructure/monitoring/release.yaml` | vmagent (scrape jobs, remote write), kube-state-metrics, Vector |
+
+## Operating
+
+### An app's metrics and logs
 
 - **Logs:** nothing to do. `labctl logs --unit <container> --since 1h`, or
   `labctl logs 'namespace:notes'`.
@@ -74,5 +84,6 @@ A Grafana in the cluster would use a host's storage IP
 
 ## Related
 
+- [Build an app](../how-to/build-an-app.md#monitoring) · [Postgres](postgres.md)
 - Pods can reach more than they need on the storage network:
   [#2](https://github.com/jurrebuunk/hgd1-k8s/issues/2).

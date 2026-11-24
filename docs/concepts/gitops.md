@@ -8,13 +8,20 @@ Everything on the cluster comes from Git. **Flux** runs inside k3s, pulls
 this repo and the app repos, and makes the cluster match them; a change is a
 commit, a rollback is a revert.
 
+!!! cluster "On the cluster docs: the cluster under this"
+
+    The k3s VMs, zones, the kubeconfig, and the S3 endpoint and monitoring
+    stores these components use.
+
+    [k3s](https://jurrebuunk.github.io/nix-hgd1-cluster/concepts/k3s/){ .md-button }
+
 !!! info "At a glance"
 
     **Status** <span class="status">Done</span> · **Entry point**
-    `clusters/hgd1/` · **Secrets** sops with age ([Manage secrets](../how-to/manage-secrets.md))
-    · **Check** `flux get kustomizations`
+    `clusters/hgd1/` · **Secrets** sops with age · **Components**
+    [Components](../reference/components.md) · **Check** `flux get kustomizations`
 
-## What runs where
+## Overview
 
 What has to exist before Kubernetes works, or keep working when it's broken,
 comes from Nix; what runs as pods comes from Git through Flux.
@@ -23,21 +30,16 @@ comes from Nix; what runs as pods comes from Git through Flux.
 | --- | --- | --- |
 | Hosts, network, Ceph, the S3 endpoint, host monitoring, `clusterd`/`labctl`, the VMs, k3s with flannel and CoreDNS | Flux, sops, metrics-server, local-path, `cloudflared`, cert-manager, CloudNativePG, k3s monitoring, Keycloak | Cloudreve, later `lab-console` and other apps |
 
-!!! cluster "On the cluster docs: the cluster under this"
+## How it works
 
-    The k3s VMs, zones, the kubeconfig, and the S3 endpoint and monitoring
-    stores these components use.
-
-    [k3s](https://jurrebuunk.github.io/nix-hgd1-cluster/concepts/k3s/){ .md-button }
-
-## Layers
+### Layers
 
 Flux applies the repo in layers; each waits until the one before is ready,
 so an operator's CRDs exist before anything uses them.
 
 | Layer | Folder | What |
 | --- | --- | --- |
-| `infrastructure` | `infrastructure/` | Controllers and operators, one folder each: metrics-server, local-path, cloudflared, cert-manager, CloudNativePG, monitoring, the Keycloak operator |
+| `infrastructure` | `infrastructure/` | Controllers and operators, one folder each |
 | `config` | `config/` | What needs their CRDs |
 | `platform` | `platform/` | Shared services: Keycloak and its database |
 | `keycloak-realm` | `platform/keycloak-realm/` | The realms, applied by keycloak-config-cli |
@@ -46,27 +48,18 @@ so an operator's CRDs exist before anything uses them.
 `components/` holds reusable pieces that apps include, such as
 `components/postgres` ([Postgres](postgres.md)).
 
-## What runs here
+### Secrets
 
-| Component | Version | Why |
-| --- | --- | --- |
-| metrics-server | chart 3.14.0 | `kubectl top`, autoscaling |
-| local-path-provisioner | 3.13.3 | StorageClass `local-path` on each node's NVMe |
-| cloudflared | 2026.10.7 | [Public access](public-access.md) |
-| cert-manager | v1.21.3 | Certificates for the Postgres backup plugin |
-| CloudNativePG | 1.30.1, Barman Cloud plugin 0.16.0 | [Postgres](postgres.md) |
-| vmagent, kube-state-metrics, Vector | charts 0.51.0, 9.0.0, 0.61.0 | [Monitoring](monitoring.md) |
-| Keycloak operator | 26.8.2 | [Keycloak](keycloak.md) |
+`*.sops.yaml` files are Secrets with encrypted values; Flux decrypts them
+with the cluster's age key (Secret `flux-system/sops-age`) when it applies
+them. See [Manage secrets](../how-to/manage-secrets.md).
 
-Traefik and ServiceLB are disabled in k3s: public apps go through the tunnel,
-LAN-only ingress comes later.
+### One repo per app
 
-## One repo per app
-
-Every app has its own repo, whether it is off-the-shelf (only manifests,
-like `hgd1-cloudreve`) or my own software (code, CI and manifests). The app
-repo has a `deploy/` folder that kustomize can build; this repo only points
-Flux at it with one file in `apps/`:
+Every app has its own repo, off-the-shelf (only manifests, like
+`hgd1-cloudreve`) or my own software (code, CI and manifests). The app repo
+has a `deploy/` folder that kustomize can build; this repo points Flux at it
+with one file in `apps/`, which also brings `components/` along:
 
 ```yaml
 # apps/<app>.yaml
@@ -77,7 +70,7 @@ spec:
   url: https://github.com/jurrebuunk/hgd1-<app>
   ref: { branch: main }
   interval: 1m
-  include:              # components/ from this repo, for the app's kustomization
+  include:
     - repository: { name: flux-system }
       fromPath: components
       toPath: components
@@ -96,9 +89,17 @@ spec:
   decryption: { provider: sops, secretRef: { name: sops-age } }
 ```
 
-What stays in this repo for an app: its tunnel route
-([Public access](public-access.md)) and its Keycloak client
-([Keycloak](keycloak.md)), because those change the shared platform.
+What stays in this repo for an app: its tunnel route and its Keycloak
+client, because those change the shared platform.
+
+## Configuration
+
+| File | Owns |
+| --- | --- |
+| `clusters/hgd1/*.yaml` | The layers: path, order, decryption, health checks |
+| `clusters/hgd1/flux-system/` | Flux itself (from `flux bootstrap`) |
+| `apps/*.yaml` | Which app repos Flux deploys |
+| `.sops.yaml` | Which files are encrypted, for which keys |
 
 ## Operating
 
@@ -110,7 +111,10 @@ flux suspend kustomization <name>                    # hold Flux off while fixin
 flux resume kustomization <name>
 ```
 
+## Troubleshooting
+
+See [Troubleshooting → Flux](../operate/troubleshooting.md#flux).
+
 ## Related
 
-- [Build an app](../how-to/build-an-app.md) · [Manage secrets](../how-to/manage-secrets.md)
-- [PLAN.md](https://github.com/jurrebuunk/hgd1-k8s/blob/main/PLAN.md): how it was built, step by step
+- [Build an app](../how-to/build-an-app.md) · [Manage secrets](../how-to/manage-secrets.md) · [Components](../reference/components.md)
