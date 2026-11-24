@@ -185,6 +185,12 @@ chart at the Cluster.
       2026-11-24: 288 of 288 requests answered while `hgd1-k8m02` (a
       Keycloak pod and a database server) restarted; a restore had both
       realms and the 3 groups.
+- [x] Login theme **flatwork** (`platform/keycloak/theme/`): the
+      flatwork-saas design language (Geist and IBM Plex Mono served by
+      Keycloak, the muted palette with one blue accent, dark by default and
+      light from the system). Own layout and sign-in form on top of the base
+      theme; every other page through class mappings. The realm shows as
+      "buunk".
 - [ ] Mail for password resets: [#3](https://github.com/jurrebuunk/hgd1-k8s/issues/3).
 
 **What lives where:** realm settings, clients, roles and which group gets
