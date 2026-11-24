@@ -1,0 +1,106 @@
+# The Kubernetes docs (Zensical), one of the three hgd1 doc sites:
+# cluster (nix-hgd1-cluster), network (hgd1-network) and this one.
+# Preview: nix shell nixpkgs#zensical -c zensical serve
+# Published to GitHub Pages by .github/workflows/docs.yml on every push to main.
+[project]
+site_name = "hgd1 Kubernetes"
+site_description = "What runs on the hgd1 k3s cluster, and how to run an app on it"
+site_author = "Jurre Buunk"
+site_url = "https://jurrebuunk.github.io/hgd1-k8s/"
+repo_url = "https://github.com/jurrebuunk/hgd1-k8s"
+repo_name = "jurrebuunk/hgd1-k8s"
+edit_uri = "edit/main/docs/"
+copyright = "Jurre Buunk"
+
+nav = [
+  { "Home" = "index.md" },
+  { "Concepts" = [
+    "concepts/gitops.md",
+    "concepts/public-access.md",
+    "concepts/postgres.md",
+    "concepts/keycloak.md",
+    "concepts/monitoring.md",
+    "concepts/web-ui.md",
+  ] },
+  { "How-to" = [
+    "how-to/build-an-app.md",
+    "how-to/manage-secrets.md",
+  ] },
+  { "Operate" = [
+    "operate/troubleshooting.md",
+  ] },
+  # The other two doc sites, in their own colour. The network docs aren't
+  # hosted yet (private repo): GitHub until then.
+  { "Cluster docs ↗" = "https://jurrebuunk.github.io/nix-hgd1-cluster/" },
+  { "Network docs ↗" = "https://github.com/jurrebuunk/hgd1-network/blob/main/docs/index.md" },
+]
+
+# flatwork.css is the same on all three sites; site.css sets this site's colour.
+# Bump ?v= when a stylesheet changes, so browsers drop their cached copy.
+extra_css = ["stylesheets/flatwork.css?v=3", "stylesheets/site.css?v=1"]
+
+[project.theme]
+language = "en"
+features = [
+  "content.action.edit",
+  "content.code.annotate",
+  "content.code.copy",
+  "content.code.select",
+  "content.tabs.link",
+  "content.tooltips",
+  "navigation.footer",
+  "navigation.indexes",
+  "navigation.instant",
+  "navigation.instant.prefetch",
+  "navigation.path",
+  "navigation.sections",
+  "navigation.tabs",
+  "navigation.tabs.sticky",
+  "navigation.top",
+  "navigation.tracking",
+  "search.highlight",
+  "toc.follow",
+]
+
+[project.theme.icon]
+logo = "lucide/ship-wheel"
+repo = "fontawesome/brands/github"
+
+# One dark scheme; background and colours come from the stylesheets.
+[[project.theme.palette]]
+scheme = "slate"
+primary = "custom"
+accent = "custom"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/jurrebuunk/hgd1-k8s"
+
+[project.markdown_extensions]
+abbr = {}
+admonition = {}
+attr_list = {}
+def_list = {}
+footnotes = {}
+md_in_html = {}
+tables = {}
+toc.permalink = true
+pymdownx.betterem = {}
+pymdownx.details = {}
+pymdownx.emoji.emoji_generator = "zensical.extensions.emoji.to_svg"
+pymdownx.emoji.emoji_index = "zensical.extensions.emoji.twemoji"
+pymdownx.highlight.anchor_linenums = true
+pymdownx.highlight.line_spans = "__span"
+pymdownx.highlight.pygments_lang_class = true
+pymdownx.inlinehilite = {}
+pymdownx.keys = {}
+pymdownx.mark = {}
+pymdownx.smartsymbols = {}
+# Glossary terms (includes/abbreviations.md) get a hover tooltip on every page.
+pymdownx.snippets.base_path = ["includes"]
+pymdownx.snippets.auto_append = ["abbreviations.md"]
+pymdownx.superfences.custom_fences = [
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
+]
+pymdownx.tabbed.alternate_style = true
+pymdownx.tasklist.custom_checkbox = true
