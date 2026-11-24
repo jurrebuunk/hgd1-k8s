@@ -1,6 +1,7 @@
 # Plan
 
-Where this repo is going, so I can pick it up from here. Nothing is built yet.
+Where this repo is going, so I can pick it up from here. Step 1 (Flux and
+sops) runs on the cluster since 2026-11-24.
 
 ## Goal
 
@@ -51,10 +52,10 @@ Each step ends with something to check.
 
 ### 1. Flux and secrets
 
-- [ ] An age key for the cluster; its public key in `.sops.yaml`, the private
+- [x] An age key for the cluster; its public key in `.sops.yaml`, the private
       key as a Secret in `flux-system` (once, by hand).
-- [ ] `flux bootstrap github --owner jurrebuunk --repository hgd1-k8s --path clusters/hgd1`.
-- [ ] Done when: `flux check` passes and a sops-encrypted test secret shows up
+- [x] `flux bootstrap github --owner jurrebuunk --repository hgd1-k8s --path clusters/hgd1`.
+- [x] Done when: `flux check` passes and a sops-encrypted test secret shows up
       decrypted in the cluster.
 
 ### 2. Take over the k3s add-ons
