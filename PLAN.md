@@ -1,7 +1,7 @@
 # Plan
 
-Where this repo is going, so I can pick it up from here. Step 1 (Flux and
-sops) runs on the cluster since 2026-11-24.
+Where this repo is going, so I can pick it up from here. Steps 1 (Flux and
+sops) and 2 (metrics-server, local-path) run on the cluster since 2026-11-24.
 
 ## Goal
 
@@ -60,11 +60,11 @@ Each step ends with something to check.
 
 ### 2. Take over the k3s add-ons
 
-- [ ] metrics-server and local-path-provisioner from here, with the same
+- [x] metrics-server and local-path-provisioner from here, with the same
       StorageClass name `local-path` and the same data path on each node.
-- [ ] Then in `nix-hgd1-cluster`: `metrics-server` and `local-storage` in the
+- [x] Then in `nix-hgd1-cluster`: `metrics-server` and `local-storage` in the
       k3s `disable` list, deploy, `labctl vm roll`.
-- [ ] Done when: `kubectl top nodes` works and a test volume on `local-path`
+- [x] Done when: `kubectl top nodes` works and a test volume on `local-path`
       binds, both from Flux.
 
 ### 3. Public access: Cloudflare Tunnel
