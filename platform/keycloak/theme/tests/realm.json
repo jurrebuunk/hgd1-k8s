@@ -1,0 +1,50 @@
+{
+  "realm": "theme-test",
+  "enabled": true,
+  "sslRequired": "none",
+  "loginTheme": "flatwork",
+  "rememberMe": true,
+  "resetPasswordAllowed": true,
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "internationalizationEnabled": true,
+  "supportedLocales": ["en", "nl"],
+  "defaultLocale": "en",
+  "smtpServer": { "host": "localhost", "port": "2525", "from": "auth@example.test" },
+  "clients": [{
+    "clientId": "theme-preview",
+    "enabled": true,
+    "publicClient": true,
+    "standardFlowEnabled": true,
+    "redirectUris": ["http://localhost:18080/*"],
+    "baseUrl": "http://localhost:18080/"
+  }],
+  "users": [
+    {
+      "username": "preview",
+      "email": "preview@example.test",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Theme",
+      "lastName": "Preview",
+      "credentials": [{ "type": "password", "value": "preview-password-only", "temporary": false }]
+    },
+    {
+      "username": "otp-preview",
+      "email": "otp@example.test",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "OTP",
+      "lastName": "Preview",
+      "credentials": [
+        { "type": "password", "value": "preview-password-only", "temporary": false },
+        {
+          "type": "otp",
+          "userLabel": "Preview authenticator",
+          "secretData": "{\"value\":\"JBSWY3DPEHPK3PXP\"}",
+          "credentialData": "{\"subType\":\"totp\",\"digits\":6,\"counter\":0,\"period\":30,\"algorithm\":\"HmacSHA1\"}"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+/* buunk-auth handoff layout, adapted to @flatwork-ui/react's fw- namespace.
+   Component styles come from the published library, not this file.
+   < 640px   full-bleed form
+   ≥ 640px   centred card
+   ≥ 1024px  split page: binary art panel | form pane */
+
+html,body{margin:0; min-height:100%}
+.auth{position:relative; min-height:100vh; min-height:100dvh; display:flex; background:var(--fw-bg); color-scheme:dark}
+.auth[data-theme="light"]{color-scheme:light}
+.auth ::selection{background:var(--fw-accent); color:var(--fw-on-accent)}
+.auth input{caret-color:var(--fw-accent)}
+.auth a{text-underline-offset:3px}
+/* Keep the library's button colours above its generic .fw a link rule. */
+.auth a.fw-btn-primary{color:var(--fw-on-accent)}
+.auth a.fw-btn-secondary{color:var(--fw-heading)}
+.auth a.fw-btn-ghost{color:var(--fw-text)}
+.auth-sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
+.auth-forgot{font-size:13px; font-weight:500}
+.auth-reveal{flex:none; width:44px; height:44px; margin-right:2px}
+.auth-eye-slash{display:none}
+.auth-reveal[aria-pressed="true"] .auth-eye-slash{display:block}
+.auth .fw-input-affix:focus-within{border-color:var(--fw-focus); outline:2px solid var(--fw-focus); outline-offset:1px}
+.auth .fw-input-affix.is-error{border-color:var(--fw-error)}
+.auth .fw-alert-text{color:inherit}
+.auth .fw-alert>svg{width:16px; height:16px; flex:none; margin-top:2px}
+.auth-otp-field,.auth-credentials{display:flex; flex-direction:column; gap:8px; min-width:0; margin:0; padding:0; border:0}
+.auth-credentials legend{margin-bottom:8px}
+.auth-card>form:not(.auth-form){margin:0}
+.auth-card>p,.auth-bottom p{margin:0}
+.auth-form [aria-busy="true"]{cursor:progress; opacity:.65}
+.auth [aria-disabled="true"]{pointer-events:none; opacity:.65}
+/* Base-theme required actions (password updates, WebAuthn, recovery, errors)
+   inherit this same shell and the library's controls. */
+.auth #kc-form,.auth #kc-register-form,.auth #kc-passwd-update-form{display:flex; flex-direction:column; gap:18px}
+.auth .fw-group{display:flex; flex-direction:column; gap:6px; margin-bottom:16px}
+.auth .fw-actions{margin-top:18px}
+.auth .fw-choice-list{display:flex; flex-direction:column; gap:12px}
+.auth .fw-choice{border:1px solid var(--fw-border); border-radius:var(--fw-r-sm); padding:12px}
+.auth .fw-hidden{display:none}
+/* Keycloak's inherited passwordVisibility.js swaps these icon classes. */
+.auth .fw-icon-eye,.auth .fw-icon-eye-off{display:inline-block; width:16px; height:16px; background:currentColor; mask:center/contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.4'%3E%3Cpath d='M1.5 8S3.9 3.5 8 3.5 14.5 8 14.5 8 12.1 12.5 8 12.5 1.5 8 1.5 8z'/%3E%3Ccircle cx='8' cy='8' r='2'/%3E%3C/svg%3E")}
+.auth .fw-icon-eye-off{mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.4'%3E%3Cpath d='M1.5 8S3.9 3.5 8 3.5 14.5 8 14.5 8 12.1 12.5 8 12.5 1.5 8 1.5 8zM2 2l12 12'/%3E%3Ccircle cx='8' cy='8' r='2'/%3E%3C/svg%3E")}
+.auth .fw-input-affix>.fw-btn{flex:none; margin-inline-end:2px}
+@media(prefers-color-scheme:light){.auth[data-theme="system"]{color-scheme:light}}
+.auth-pane{position:relative; flex:1; min-width:0; display:flex; flex-direction:column}
+
+/* language — the only chrome */
+.auth-lang{position:absolute; top:8px; right:12px; z-index:2; display:flex; align-items:center; gap:4px; height:44px; padding:0 8px; border-radius:var(--fw-r-sm); color:var(--fw-muted); font-size:13px}
+.auth-lang svg{width:15px; height:15px}
+.auth-lang select{appearance:none; border:0; background:transparent; color:var(--fw-text); font:inherit; font-size:13px; cursor:pointer; padding:4px 0}
+
+.auth-main{flex:1; display:flex; flex-direction:column; padding:68px 20px 28px}
+.auth-card{width:100%; max-width:400px; margin:0 auto; flex:1; display:flex; flex-direction:column; gap:28px}
+.auth-back{display:inline-flex; align-self:flex-start; align-items:center; gap:6px; height:44px; padding:0 8px; margin:-12px 0 0 -8px; border-radius:var(--fw-r-sm); color:var(--fw-text) !important; font-size:14px; font-weight:500; text-decoration:none !important}
+.auth-back svg{width:16px; height:16px}
+.auth-hero{display:flex; flex-direction:column; gap:8px}
+.auth-icon{display:grid; place-content:center; width:48px; height:48px; margin-bottom:8px; border-radius:var(--fw-r-md); background:var(--fw-surface-2); border:1px solid var(--fw-border); color:var(--fw-accent)}
+.auth-icon svg{width:22px; height:22px}
+.auth-title{margin:0; font-size:26px; line-height:1.2; font-weight:600; letter-spacing:-.02em; color:var(--fw-heading)}
+.auth-sub{margin:0; color:var(--fw-muted); font-size:15px}
+.auth-sub strong{color:var(--fw-heading); font-weight:500}
+.auth-form{display:flex; flex-direction:column; gap:18px; margin:0}
+.auth .fw-input{height:48px; font-size:16px}           /* 16px stops iOS zoom-on-focus */
+.auth .fw-input-affix{height:48px}
+.auth .fw-input-affix > .fw-input{height:46px}
+.auth .fw-btn-lg{height:48px; font-size:15px}
+.auth-row{display:flex; justify-content:space-between; align-items:center; gap:12px}
+.auth-or{display:flex; align-items:center; gap:12px; color:var(--fw-muted); font-size:12px}
+.auth-or::before, .auth-or::after{content:""; flex:1; height:1px; background:var(--fw-border)}
+.auth-idp{display:grid; grid-template-columns:1fr; gap:10px}
+.auth-idp .fw-btn{font-weight:500}
+.auth-bottom{margin-top:auto; padding-top:8px; text-align:center; color:var(--fw-muted); font-size:14px}
+.auth-bottom a{font-weight:500}
+
+.otp{display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:8px}
+.otp .fw-input{height:56px; padding:0; text-align:center; font-family:var(--fw-mono); font-size:22px; color:var(--fw-heading)}
+
+/* ---------- binary wordmark field (full-bleed, behind the form) ---------- */
+.auth-art{display:none; position:absolute; inset:0; z-index:0; overflow:hidden}
+.auth-pane{z-index:1}
+.bin{position:absolute; top:0; left:0; margin:0; padding:0; font:400 12px/18px var(--fw-mono); letter-spacing:.6em; white-space:normal; user-select:none; pointer-events:none}
+.bin-row{display:block; height:18px; white-space:pre}
+.bin-f{color:var(--fw-border)}
+.bin-m{color:var(--fw-border-strong)}
+.bin-a{color:var(--fw-accent)}
+.bin-h{color:#d7ffc3}
+.fw[data-theme="light"] .bin-h{color:var(--fw-accent-hover); font-weight:500}
+
+/* ≥ 640px: centred card */
+@media (min-width:640px){
+  .auth-art{display:block}
+  .auth-lang{top:16px; right:20px}
+  .auth-main{justify-content:center; padding:72px 24px}
+  .auth-card{flex:none; padding:40px; background:var(--fw-surface); border:1px solid var(--fw-border); border-radius:var(--fw-r-lg); gap:24px}
+  .auth-title{font-size:22px}
+  .auth-sub{font-size:14px}
+  .auth .fw-input{height:40px; font-size:14px}
+  .auth .fw-input-affix{height:40px}
+  .auth .fw-input-affix > .fw-input{height:38px}
+  .auth .fw-btn-lg{height:44px; font-size:14px}
+  .auth-idp{grid-template-columns:repeat(2, minmax(0,1fr))}
+  .auth-bottom{margin-top:0; padding-top:4px}
+  .auth-back{margin-top:-8px}
+  .otp .fw-input{height:52px}
+}
+
+/* ≥ 1024px: split page — the form pane covers the right of the wordmark */
+@media (min-width:1024px){
+  .auth-pane{flex:0 0 48%; margin-left:auto; background:var(--fw-surface); border-left:1px solid var(--fw-border)}
+  .auth-lang{top:20px; right:24px}
+  .auth-main{padding:72px 56px}
+  .auth-card{padding:0; background:transparent; border:0; border-radius:0; max-width:380px}
+}

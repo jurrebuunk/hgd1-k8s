@@ -54,8 +54,15 @@ spec:
                 - { key: theme.properties, path: login/theme.properties }
                 - { key: template.ftl, path: login/template.ftl }
                 - { key: login.ftl, path: login/login.ftl }
+                - { key: login-otp.ftl, path: login/login-otp.ftl }
+                - { key: login-reset-password.ftl, path: login/login-reset-password.ftl }
+                - { key: info.ftl, path: login/info.ftl }
+                - { key: binary.ftl, path: login/binary.ftl }
                 - { key: messages_en.properties, path: login/messages/messages_en.properties }
+                - { key: messages_nl.properties, path: login/messages/messages_nl.properties }
                 - { key: flatwork.css, path: login/resources/css/flatwork.css }
+                - { key: auth.css, path: login/resources/css/auth.css }
+                - { key: auth.js, path: login/resources/js/auth.js }
                 - { key: favicon.svg, path: login/resources/img/favicon.svg }
                 - { key: geist-400.woff2, path: login/resources/fonts/geist-400.woff2 }
                 - { key: geist-500.woff2, path: login/resources/fonts/geist-500.woff2 }

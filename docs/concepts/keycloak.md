@@ -23,7 +23,7 @@ account for every app.
 | Realm `hgd1` | For people and apps: settings, brute-force protection, password policy, groups `admins`, `family`, `friends` |
 | Realm `master` | Only for administrators; its address is `http://localhost:8080`, so it only works through the port-forward |
 | Public | Through the [tunnel](public-access.md); `/admin` and `/realms/master` answer 404 there |
-| Theme | `flatwork`: the flatwork-saas design language, dark by default, light from the system |
+| Theme | `flatwork`: the buunk-auth design, built with `@flatwork-ui/react`; dark by default, light/system configurable |
 
 ## How it works
 
@@ -76,12 +76,22 @@ passwords.
 | `infrastructure/keycloak-operator/` | The operator and its CRDs |
 | `platform/keycloak/keycloak.yaml` | Keycloak: instances, hostname, theme |
 | `platform/keycloak/database.yaml` | `keycloak-db` |
-| `platform/keycloak/theme/` | The flatwork login theme |
+| `platform/keycloak/theme/` | Flatwork React source and generated Keycloak templates ([build, preview and deploy](https://github.com/jurrebuunk/hgd1-k8s/tree/main/platform/keycloak/theme#readme)) |
 | `platform/keycloak/bootstrap-*.sops.yaml` | First admin and keycloak-config-cli's login |
 | `platform/keycloak-realm/hgd1.yaml`, `master.yaml` | The realms, including the apps' clients and roles |
 | `platform/keycloak-realm/client-*.sops.yaml` | The apps' client secrets |
 
 ## Operating
+
+**Theme changes:** edit `platform/keycloak/theme/src/`, then run `npm ci`,
+`npm run typecheck`, `npm run build` and `npm test` from the theme directory.
+Commit source and generated assets together and deploy through Flux as in
+[Your first change](../get-started/first-change.md), reconciling `platform`.
+The hashed theme ConfigMap rolls both pods automatically. The theme README
+also describes a disposable Keycloak preview and real browser/OTP/reset tests.
+No realm settings are changed by the theme: reset stays hidden until SMTP and
+`resetPasswordAllowed` are configured; registration, providers and locale
+switching also reflect actual realm configuration.
 
 **Admin console:**
 

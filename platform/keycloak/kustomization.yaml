@@ -17,8 +17,15 @@ configMapGenerator:
       - theme/theme.properties
       - theme/template.ftl
       - theme/login.ftl
+      - theme/login-otp.ftl
+      - theme/login-reset-password.ftl
+      - theme/info.ftl
+      - theme/binary.ftl
       - theme/messages_en.properties
+      - theme/messages_nl.properties
       - theme/flatwork.css
+      - theme/auth.css
+      - theme/auth.js
       - theme/favicon.svg
       - theme/geist-400.woff2
       - theme/geist-500.woff2

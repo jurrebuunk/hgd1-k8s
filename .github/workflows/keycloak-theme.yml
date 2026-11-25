@@ -1,0 +1,31 @@
+name: Keycloak theme
+on:
+  push:
+    paths:
+      - 'platform/keycloak/**'
+      - '.github/workflows/keycloak-theme.yml'
+  pull_request:
+    paths:
+      - 'platform/keycloak/**'
+      - '.github/workflows/keycloak-theme.yml'
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: platform/keycloak/theme
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: platform/keycloak/theme/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm test
+      - name: Generated assets must be committed
+        run: git diff --exit-code -- '*.ftl' '*.css' 'auth.js' '*.woff2'
