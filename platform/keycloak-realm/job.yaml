@@ -31,6 +31,8 @@ spec:
             - { name: IMPORT_VARSUBSTITUTION_ENABLED, value: "true" }
             - name: CLOUDREVE_CLIENT_SECRET
               valueFrom: { secretKeyRef: { name: keycloak-client-cloudreve, key: client-secret } }
+            - name: CLOUDFLARE_ZT_CLIENT_SECRET
+              valueFrom: { secretKeyRef: { name: keycloak-client-cloudflare-zero-trust, key: client-secret } }
           resources:
             requests: { cpu: 50m, memory: 256Mi }
             limits: { memory: 512Mi }

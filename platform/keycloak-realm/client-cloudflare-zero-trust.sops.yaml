@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: keycloak-client-cloudflare-zero-trust
+    namespace: keycloak
+stringData:
+    client-secret: ENC[AES256_GCM,data:OrFS0ImG9T93ktytr4gCUQBAhqsPOwUvdyXzB7Qe7haAolJQYDQYig==,iv:OmoApmBXl5pg3IvA1Gk8RO0fS2CiFnUk9G/QHZgiqWs=,tag:B+P3iZsVbm4fLHCmUT6D3A==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBscEIzVHplSXVnTUlFMVdp
+            a1ZlazM3d2xDTnltaDU1Z1BSSGpaeHE1OVRNClZybTN1empVWnRWNHBic3loNjhn
+            YnlvNlZGQ2lCKzBJV1VXbHFKQ0JWYXMKLS0tIEIzK2cwY3poMEVqTmJMM280cVFu
+            UGI4T0ZmQ05OUU1xVjhGTGNzSWJEWE0K/B/umo921FElLFot8lhIMr1QUgzs6D/V
+            Cym+QDnPblYuL4uBoOIFOIPfTl8Y5FlVrpmDiRkO0d3IoW46OgBhsA==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1fharluqqx8n8clz5an6qte8hgqrkawjz6sy23humd2awzr0vq5tsvv6xgf
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBBSW91ajZ5WmFVZzlzUG00
+            UHh3a1pyRVVRRjJmaFVDTlFMN0gwWkl2eEhzCmJ0NXpaRXNQWjJEZ2dySS9hbUg4
+            N1JpSitYOERWL0RxeitLaGlTNGM0a1EKLS0tIC9UVG1YdVRjam13SGtZSkd6bVhY
+            ZmxDek9rY3Jrd2tUWFBLeGhORGNqQTAKUR3n6BQNkRAu4C1xov5Q2yww1yco8t+2
+            6obOj9VokDrqZ5DoUyzhb9oNonshXkmuPTF2omLyOpBaLOvrQ28vHQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age14lsxk30xq82ywvkf4l8psk55a0tkls87qx3k6u0zllyjt9tpwawsdgycxx
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-11-25T19:39:08Z"
+    mac: ENC[AES256_GCM,data:Sln1eEaCnkdLBSUP8KW66758Hr50aqjytvXKGG8llxaIj92hv6HA4k/2KBJ9ymq94dqv2fCTFUXO0MRaZiohmYQjcQO57urV3JVJnKjk2ZOaKheUtxA0/hcoNJeQ1llw4Fi7h/UxZBv9TND/nQ2JEIEDWjMTRT3i8X155EFYwkI=,iv:qwQdWxi/NIwy4fu+HqPTa6nZ6l0Gr6X4E9ErKVvrxSc=,tag:17fo6oA5CLLnsCSobHWGtA==,type:str]
+    version: 3.13.3

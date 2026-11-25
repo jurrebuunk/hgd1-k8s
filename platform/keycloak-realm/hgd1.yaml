@@ -20,9 +20,11 @@ groups:
   - name: admins
     clientRoles:
       cloudreve: [cloudreve-admin]
+      cloudflare-zero-trust: [warp]
   - name: family
     clientRoles:
       cloudreve: [cloudreve-user]
+      cloudflare-zero-trust: [warp]
   - name: friends
     clientRoles:
       cloudreve: [cloudreve-user]
@@ -34,6 +36,9 @@ roles:
         description: Administrator in Cloudreve (Cloudreve group Admin), not in Keycloak
       - name: cloudreve-user
         description: User in Cloudreve (Cloudreve group User)
+    cloudflare-zero-trust:
+      - name: warp
+        description: May connect a device to WARP (internal apps); not the admin network
 clients:
   # Cloudreve (https://cloudreve.buunk.org, repo hgd1-cloudreve): login
   # through its OIDC patch. The roles go into the ID token as "roles"; a
@@ -69,6 +74,54 @@ clients:
           claim.name: roles
           jsonType.label: String
           multivalued: "true"
+          id.token.claim: "true"
+          access.token.claim: "false"
+          userinfo.token.claim: "false"
+          introspection.token.claim: "false"
+  # Cloudflare Zero Trust (team buunk): signing in to WARP with a buunk
+  # account. Cloudflare lets a device enrol only with the role warp; the
+  # groups go along as the claim "groups" for Gateway rules per app
+  # (identity.oidc_claims "groups=family"). My own WARP login and the admin
+  # network stay on Cloudflare's one-time PIN, not on this. The secret comes
+  # from client-cloudflare-zero-trust.sops.yaml.
+  - clientId: cloudflare-zero-trust
+    name: WARP
+    enabled: true
+    protocol: openid-connect
+    publicClient: false
+    clientAuthenticatorType: client-secret
+    secret: $(env:CLOUDFLARE_ZT_CLIENT_SECRET)
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: false
+    serviceAccountsEnabled: false
+    frontchannelLogout: false
+    redirectUris:
+      - https://buunk.cloudflareaccess.com/cdn-cgi/access/callback
+    webOrigins: []
+    attributes:
+      pkce.code.challenge.method: S256
+    defaultClientScopes: [basic, profile, email]
+    optionalClientScopes: []
+    protocolMappers:
+      - name: roles
+        protocol: openid-connect
+        protocolMapper: oidc-usermodel-client-role-mapper
+        config:
+          usermodel.clientRoleMapping.clientId: cloudflare-zero-trust
+          claim.name: roles
+          jsonType.label: String
+          multivalued: "true"
+          id.token.claim: "true"
+          access.token.claim: "false"
+          userinfo.token.claim: "false"
+          introspection.token.claim: "false"
+      - name: groups
+        protocol: openid-connect
+        protocolMapper: oidc-group-membership-mapper
+        config:
+          claim.name: groups
+          full.path: "false"
           id.token.claim: "true"
           access.token.claim: "false"
           userinfo.token.claim: "false"
