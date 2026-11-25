@@ -2,5 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - sops-test.sops.yaml
-  # cert-manager/clusterissuers.yaml: back in once the Secret cloudflare-dns-token
-  # exists; config waits for health, and an issuer without it never gets Ready.
+  # Let's Encrypt for internal apps; the token is the S3 endpoint's DNS token
+  # (nix-hgd1-cluster secrets/s3-acme-cloudflare.age), DNS edit on buunk.org.
+  - cert-manager/cloudflare-dns-token.sops.yaml
+  - cert-manager/clusterissuers.yaml
