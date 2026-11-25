@@ -22,7 +22,7 @@ account for every app.
 | Database | `keycloak-db`, its own Postgres with 3 servers, backed up like every [cluster](postgres.md) |
 | Realm `hgd1` | For people and apps: settings, brute-force protection, password policy, groups `admins`, `family`, `friends` |
 | Realm `master` | Only for administrators; its address is `http://localhost:8080`, so it only works through the port-forward |
-| Public | Through the [tunnel](public-access.md); `/admin` and `/realms/master` answer 404 there |
+| Public | Through the [tunnel](public-access.md); `/` redirects to `/realms/hgd1/account/` (sign-in when logged out); `/admin` and `/realms/master` answer 404 |
 | Theme | `flatwork`: the buunk-auth design, built with `@flatwork-ui/react`; dark by default, light/system configurable |
 
 ## How it works
@@ -75,6 +75,7 @@ passwords.
 | --- | --- |
 | `infrastructure/keycloak-operator/` | The operator and its CRDs |
 | `platform/keycloak/keycloak.yaml` | Keycloak: instances, hostname, theme |
+| `platform/keycloak/root-redirect.yaml`, `root-redirect.conf` | Two small redirect pods: public `/` → account console, never the private admin URL |
 | `platform/keycloak/database.yaml` | `keycloak-db` |
 | `platform/keycloak/theme/` | Flatwork React source and generated Keycloak templates ([build, preview and deploy](https://github.com/jurrebuunk/hgd1-k8s/tree/main/platform/keycloak/theme#readme)) |
 | `platform/keycloak/bootstrap-*.sops.yaml` | First admin and keycloak-config-cli's login |
@@ -82,6 +83,19 @@ passwords.
 | `platform/keycloak-realm/client-*.sops.yaml` | The apps' client secrets |
 
 ## Operating
+
+**Direct access:** open <https://auth.buunk.org/>. The tunnel sends only the
+exact root to a fixed, non-cacheable 302 redirect to
+`https://auth.buunk.org/realms/hgd1/account/`; logged-out visitors see the login
+theme, logged-in visitors reach their account. All other realm traffic still
+goes straight to Keycloak. Its admin hostname remains `http://localhost:8080`
+for port-forward access; do not make it public to fix a root redirect.
+
+When introducing this route, deploy and verify the redirect Service in
+`platform` before enabling its tunnel route in `infrastructure`, so traffic
+never points to a missing backend. Later config changes roll its hashed
+ConfigMap automatically. Check `curl -I https://auth.buunk.org/` for the account
+Location, then verify `/admin/` and `/realms/master/` still return 404.
 
 **Theme changes:** edit `platform/keycloak/theme/src/`, then run `npm ci`,
 `npm run typecheck`, `npm run build` and `npm test` from the theme directory.

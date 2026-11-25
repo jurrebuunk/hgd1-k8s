@@ -12,7 +12,7 @@ has a proxied CNAME to `464b884a-410d-4066-8946-0532c41f1978.cfargotunnel.com`.
 
 | Hostname | To | Notes |
 | --- | --- | --- |
-| `auth.buunk.org` | Keycloak (`keycloak-service.keycloak:8080`) | `/admin` and `/realms/master` answer 404 |
+| `auth.buunk.org` | Keycloak (`keycloak-service.keycloak:8080`) | Exact `/` → 302 to `/realms/hgd1/account/` through `keycloak-root-redirect.keycloak:8080`; `/admin` and `/realms/master` answer 404 |
 | `cloudreve.buunk.org` | Cloudreve (`cloudreve.cloudreve:80`) | |
 | `files-s3.buunk.org` | Cloudreve's S3 gateway (`s3-gateway.cloudreve:80`) | Only `/cloudreve/…` (the bucket); everything else 404 |
 

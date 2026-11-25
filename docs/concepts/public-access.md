@@ -40,7 +40,10 @@ flowchart LR
 `cloudflared` reads an ingress list: each entry matches a hostname (and
 optionally a path regex) and names a Service. The last entry answers 404 for
 everything else. A route with `service: http_status:404` blocks a path, as
-for Keycloak's admin console.
+for Keycloak's admin console. On `auth.buunk.org`, the exact root `/` goes to
+a small redirect Service, which returns a fixed 302 to the hgd1 account console;
+other allowed paths go straight to Keycloak. Deploy that Service in `platform`
+before enabling the root route (see [Keycloak](keycloak.md#operating)).
 
 ### DNS
 

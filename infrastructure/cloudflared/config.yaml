@@ -9,6 +9,11 @@ ingress:
   - hostname: auth.buunk.org
     path: ^/(admin|realms/master)(/.*)?$
     service: http_status:404
+  # Keycloak's / points at its private admin URL. Only the exact root goes
+  # to this fixed account-console redirect; realm/API traffic is unchanged.
+  - hostname: auth.buunk.org
+    path: ^/$
+    service: http://keycloak-root-redirect.keycloak.svc.cluster.local:8080
   - hostname: auth.buunk.org
     service: http://keycloak-service.keycloak.svc.cluster.local:8080
   # Cloudreve (hgd1-cloudreve): the web app, its own accounts.
