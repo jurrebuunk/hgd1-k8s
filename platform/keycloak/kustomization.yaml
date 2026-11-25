@@ -6,12 +6,15 @@ resources:
   - bootstrap-admin.sops.yaml
   - bootstrap-service.sops.yaml
   - keycloak.yaml
+  - root-redirect.yaml
   - networkpolicy.yaml
 components:
   - ../../components/postgres
   - ../../components/egress/default
 # The login theme flatwork (theme/), mounted into Keycloak by keycloak.yaml.
 configMapGenerator:
+  - name: keycloak-root-redirect
+    files: [nginx.conf=root-redirect.conf]
   - name: keycloak-theme
     files:
       - theme/theme.properties
