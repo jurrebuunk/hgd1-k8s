@@ -16,6 +16,7 @@ From the cluster repo's dev shell:
 git clone https://github.com/jurrebuunk/nix-hgd1-cluster
 cd nix-hgd1-cluster && nix develop
 warp-cli connect
+warp-cli vnet 84c40b26-4fac-4131-a48a-9db3ca63267c   # hgd1-admin: the site, kubectl
 kubeconfig                         # writes ~/.kube/hgd1.yaml (cluster admin, mode 600)
 export KUBECONFIG=~/.kube/hgd1.yaml
 kubectl get nodes -L topology.kubernetes.io/zone

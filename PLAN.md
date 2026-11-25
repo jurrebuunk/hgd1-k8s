@@ -375,7 +375,7 @@ flowchart LR
 | 3 | Cloudflare | The tunnel `hgd1-apps` (done) and a DNS token for external-dns (#1) |
 | 4, 7 | `labctl` | S3 users and buckets (needs the RGW cap for `clusterd`) |
 | 5 | `nix-hgd1-cluster` | The hosts accept 8428 and 9428 on the storage bridge (done; no router rule needed) |
-| 10 | `nix-hgd1-cluster` | Remote access docs: admin route in virtual network `hgd1-admin`, WARP on all day; addresses page: `lab.buunk.org` over WARP and no MetalLB range |
+| 10 | `nix-hgd1-cluster` | Remote access docs: admin route in virtual network `hgd1-admin`, WARP on all day; addresses page: `lab.buunk.org` over WARP and no MetalLB range (done) |
 
 ## Later
 

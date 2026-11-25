@@ -53,7 +53,9 @@ flowchart TB
 ??? note "Public through a tunnel, no ingress controller"
 
     Cloudflare terminates TLS; no port is opened on the network and no
-    certificate or load balancer IP is needed. LAN-only ingress comes later.
+    certificate or load balancer IP is needed. Apps that aren't public go over
+    WARP through a second tunnel ([Internal access](internal-access.md)), not a
+    LAN ingress: the VLANs stay strict.
 
 ??? note "No Ceph block storage for pods"
 

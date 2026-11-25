@@ -5,7 +5,7 @@ icon: lucide/heart-pulse
 # Operate
 
 Running the cluster's platform day to day. Commands run on the laptop with
-WARP connected and `KUBECONFIG=~/.kube/hgd1.yaml`.
+WARP connected on `hgd1-admin` and `KUBECONFIG=~/.kube/hgd1.yaml`.
 
 ## Health check
 

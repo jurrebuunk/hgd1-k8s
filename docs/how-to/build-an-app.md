@@ -23,8 +23,9 @@ this repo (public access, Postgres, logins, monitoring).
 On top of that, from this repo: [public access](../concepts/public-access.md)
 through a Cloudflare Tunnel, [Postgres](../concepts/postgres.md) with S3
 backups, [logins](../concepts/keycloak.md) through Keycloak and
-[monitoring](../concepts/monitoring.md) of pods. Internal apps over WARP
-come later ([roadmap, step 10](../reference/roadmap.md#10-internal-apps-over-warp)).
+[monitoring](../concepts/monitoring.md) of pods, and
+[internal access](../concepts/internal-access.md) over WARP for apps that
+aren't public.
 
 ## Access
 
@@ -32,6 +33,7 @@ come later ([roadmap, step 10](../reference/roadmap.md#10-internal-apps-over-war
 git clone https://github.com/jurrebuunk/nix-hgd1-cluster
 cd nix-hgd1-cluster && nix develop
 warp-cli connect
+warp-cli vnet 84c40b26-4fac-4131-a48a-9db3ca63267c   # hgd1-admin: the site, kubectl
 kubeconfig                  # ~/.kube/hgd1.yaml
 export KUBECONFIG=~/.kube/hgd1.yaml
 kubectl get nodes -L topology.kubernetes.io/zone
@@ -182,10 +184,11 @@ Cloudflare handles TLS, and no port on the network is opened
 use Keycloak (`auth.buunk.org`) over OIDC. The first one is Cloudreve
 (`cloudreve.buunk.org`).
 
-Services that shouldn't be public come later, over WARP instead of a
-local ingress: a second tunnel in the cluster, one private hostname route
-per app under `buunk.org`, HTTPS from an internal Traefik with cert-manager
-([roadmap, step 10](../reference/roadmap.md#10-internal-apps-over-warp)).
+Services that shouldn't be public go over WARP instead of a local
+ingress: a second tunnel in the cluster, one hostname route per app under
+`buunk.org`, HTTPS from an internal Traefik with a Let's Encrypt certificate
+([Internal access](../concepts/internal-access.md),
+[Publish an internal app](publish-an-internal-app.md)).
 
 ## Checklist
 

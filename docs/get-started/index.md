@@ -37,8 +37,8 @@ in order the first time.
 
 ## What you need
 
-- WARP connected (or a cable into the site network): the Kubernetes API is
-  only on the LAN.
+- WARP connected on the virtual network `hgd1-admin` (or a cable into the
+  site network): the Kubernetes API is only on the LAN.
 - The `nix-hgd1-cluster` dev shell for `kubeconfig`, `kubectl`, `flux`,
   `sops` and `ssh-to-age`, or those tools from anywhere else.
 - Push access to [`hgd1-k8s`](https://github.com/jurrebuunk/hgd1-k8s) (and the

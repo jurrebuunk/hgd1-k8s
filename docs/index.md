@@ -93,7 +93,7 @@ flowchart LR
 | Keycloak at `auth.buunk.org` | <span class="status">Done</span> | [Keycloak](concepts/keycloak.md) |
 | Cloudreve at `cloudreve.buunk.org` | <span class="status">Done</span> | [hgd1-cloudreve](https://github.com/jurrebuunk/hgd1-cloudreve) |
 | Web UI (`lab-console`) | <span class="status status--planned">Planned</span> | [Web UI](concepts/web-ui.md) |
-| Internal apps over WARP (tunnel `hgd1-internal`) | <span class="status">Part 1</span> | [Internal access](concepts/internal-access.md) |
+| Internal apps over WARP (tunnel `hgd1-internal`) | <span class="status">Done</span> | [Internal access](concepts/internal-access.md) |
 
 ## I want to…
 
@@ -111,7 +111,7 @@ flowchart LR
 
 ## Conventions
 
-- Commands run on the laptop with WARP connected and
+- Commands run on the laptop with WARP connected on `hgd1-admin` and
   `KUBECONFIG=~/.kube/hgd1.yaml` (from `kubeconfig` in the `nix-hgd1-cluster`
   dev shell).
 - A change is a commit: Flux applies `main` within a few minutes. Never
