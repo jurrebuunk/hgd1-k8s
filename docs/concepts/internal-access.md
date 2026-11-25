@@ -12,8 +12,7 @@ involved, so the strict VLANs stay as they are.
 
 !!! info "At a glance"
 
-    **Status** <span class="status">Running</span> (certificates wait
-    for a DNS token) · **Sign-in** one-time PIN (me) or Keycloak (`warp` role) · **Tunnel** `hgd1-internal`
+    **Status** <span class="status">Running</span> · **Sign-in** one-time PIN (me) or Keycloak (`warp` role) · **Tunnel** `hgd1-internal`
     (`46adc72d-f011-4a1d-b7fd-b4c22f3a8447`) · **Ingress class** `internal`
     · **How-to** [Publish an internal app](../how-to/publish-an-internal-app.md)
     · **Roadmap** [step 10](../reference/roadmap.md#10-internal-apps-over-warp)
@@ -138,7 +137,7 @@ warp-cli vnet 21a5b1d6-194b-4826-963d-d3352e64dfe5    # default
 | Tunnel, `warp-routing` | `infrastructure/cloudflared-internal/` (credentials sops) |
 | Internal Traefik | `infrastructure/traefik-internal/release.yaml` (chart 42.4.0) |
 | Name → Traefik | `infrastructure/coredns/coredns-custom.yaml` |
-| Certificate issuers | `config/cert-manager/clusterissuers.yaml`, token `cloudflare-dns-token` |
+| Certificate issuers | `config/cert-manager/clusterissuers.yaml`; token `config/cert-manager/cloudflare-dns-token.sops.yaml` (the S3 endpoint's DNS token, for now) |
 | Hostname routes, Gateway rules, virtual networks | Zero Trust dashboard (or the API) |
 | Test app | `platform/whoami/` → `https://whoami.buunk.org` |
 

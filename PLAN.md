@@ -346,10 +346,9 @@ flowchart LR
       `default` all day.
 - [x] Test app `whoami.buunk.org` reachable over WARP, blocked without the
       allow rule.
-- [ ] Let's Encrypt over DNS-01: issuers are in `config/cert-manager/`;
-      waiting for a Cloudflare API token (DNS edit on `buunk.org`) as the
-      sops Secret `cloudflare-dns-token` in `cert-manager`. Then whoami on
-      staging, then production.
+- [x] Let's Encrypt over DNS-01, one certificate per app: whoami has a
+      trusted certificate (staging first, then production). The token is
+      the S3 endpoint's DNS token for now.
 - [x] Docs: [Internal access](https://jurrebuunk.github.io/hgd1-k8s/concepts/internal-access/),
       [Publish an internal app](https://jurrebuunk.github.io/hgd1-k8s/how-to/publish-an-internal-app/).
 
