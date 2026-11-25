@@ -233,30 +233,51 @@ sees their profile and the apps they can use, a bit like Keycloak's account
 console but ours, and each person can make their own corner of it. Keycloak
 stays where accounts and passwords live.
 
-**Two layers, so the intranet stays clean:**
+**Layout:** the intranet is one page plus settings, with a sidebar.
 
-| Shared (the same for everyone) | Personal (each person's own) |
-| --- | --- |
-| Profile, apps the person has a role for, nothing else | Start page, quick links, own pages with embedded sites and tools |
-| Defined by me | Made by the person, visible only to them |
+```text
+┌──────────────┬──────────────────────────────────────────┐
+│ Home         │  Home: every app I have access to        │
+│ ──────────── │  ┌───────────┐ ┌──────┐ ┌─────────────┐  │
+│ My pages     │  │ Cloudreve │ │ …    │ │ lab-console │  │
+│  Job issues  │  └───────────┘ └──────┘ │ needs WARP  │  │
+│  …           │                         └─────────────┘  │
+│ + New page   │                                          │
+│ ──────────── │                                          │
+│ Settings     │                                          │
+└──────────────┴──────────────────────────────────────────┘
+```
 
-Personal things never show up in the shared navigation or for other people.
+| Part | What | Who |
+| --- | --- | --- |
+| **Home** | Every app the person has access to, like the applications list in Keycloak's account console. Apps behind WARP (step 10) show as *not available, connect WARP* until the person is on WARP; then they show like the rest. Nothing personal here | Shared, defined by me |
+| **My pages** (sidebar) | Pages a person made; **+ New page** creates one and embeds a site or tool in it | Personal, only theirs |
+| **Settings** | Profile and picture, their browser start page, their quick links | Personal |
 
-- [ ] Intranet app: sign in through Keycloak, show the profile and links
-      to the apps the person has a role for.
-- [ ] **Browser start page:** a personal page a person sets as their
-      browser's home or new-tab page. A DuckDuckGo search bar (a plain form
-      to `https://duckduckgo.com/`, no tracking of searches on our side),
-      their apps and their own quick links, arranged by them. It has to load
+The **browser start page** is something else than Home: a separate, light
+page a person sets as their browser's home or new-tab page, configured in
+Settings. Personal things never show up on Home or for other people, so the
+intranet itself stays clean.
+
+- [ ] Intranet app: sign in through Keycloak; Home with the apps the
+      person has a role for, read from Keycloak (the same clients its
+      account console lists).
+- [ ] WARP-aware Home: for each app behind WARP, the browser tries the
+      app's private hostname (a small request with a short timeout). It
+      works only when the person is on WARP *and* Gateway lets them in, so
+      it shows exactly what they can use. Not available: greyed out with a
+      link to how to set up WARP.
+- [ ] **Browser start page:** a DuckDuckGo search bar (a plain form to
+      `https://duckduckgo.com/`, no tracking of searches on our side), their
+      apps and their own quick links, arranged in Settings. It has to load
       fast and keep them signed in for a long time, since it opens with
       every browser window.
-- [ ] **Own pages:** a person makes pages for their own needs and embeds
-      sites or small tools in them, for example an issue tracker for my job
-      next to the things I use with it. Embedded content runs in a
-      sandboxed iframe (`sandbox`, its own origin) so it can't touch the
-      intranet's session. Many sites refuse to be framed
-      (`X-Frame-Options`, CSP `frame-ancestors`); those become a link card
-      instead.
+- [ ] **My pages and + New page:** a person makes pages for their own needs
+      and embeds a site or small tool in each, for example an issue tracker
+      for my job. Embedded content runs in a sandboxed iframe (`sandbox`,
+      its own origin) so it can't touch the intranet's session. Many sites
+      refuse to be framed (`X-Frame-Options`, CSP `frame-ancestors`); those
+      become a link card instead.
 - [ ] Profile picture upload: the image in its own S3 bucket, served at a
       public URL; the intranet writes that URL into the Keycloak user's
       `picture` attribute (through its own service client).
