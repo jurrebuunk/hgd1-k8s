@@ -328,29 +328,40 @@ flowchart LR
   (apps), and I switch to `hgd1-admin` for managing. The Gateway rule
   "only my email may reach `10.10.0.0/16`" stays.
 
-Steps:
+**Part 1, internal access for me** (running):
 
-- [ ] Test first: are private hostname routes reachable while the client
-      is on another virtual network? (The docs don't say; losing the apps
-      while on admin is acceptable.)
-- [ ] Check the account's initial resolved IP range: Chrome 142+ blocks the
-      old default `100.80.0.0/16`; the new default is `172.64.128.0/20`
-      ([changelog](https://developers.cloudflare.com/changelog/post/2026-08-11-hostname-routing-ga-public-initial-resolved-ips/)).
-      Move it if needed, and check the Split Tunnel Include list.
-- [ ] Tunnel `hgd1-internal`: credentials as sops, `cloudflared` in
-      `infrastructure/`, two replicas in different zones.
-- [ ] Internal Traefik (ClusterIP) and a CoreDNS entry so `cloudflared`
-      resolves each app name to it; cert-manager ClusterIssuer for Let's
-      Encrypt DNS-01 with the Cloudflare token.
-- [ ] Gateway network rules per app (who may reach which name), next to
-      the existing admin rules.
-- [ ] Virtual network `hgd1-admin` for the admin route, then: WARP on all
-      day with the default network, switch for admin.
-- [ ] WARP enrolment through Keycloak (Cloudflare's generic OIDC login)
-      instead of one-time PIN for my email only, so family enrol with their
-      buunk account. Free plan: up to 50 users.
-- [ ] First internal app: `lab-console` at `lab.buunk.org` (instead of a
-      load balancer IP in VLAN 40), until it goes public behind Keycloak.
+- [x] Test first: hostname routes work on every virtual network, so apps
+      stay reachable while on `hgd1-admin`.
+- [x] The account's initial resolved range is already `172.64.128.0/20`
+      (fine for Chrome, no Split Tunnel entry needed).
+- [x] Tunnel `hgd1-internal`: `infrastructure/cloudflared-internal/`, two
+      replicas in two zones, `warp-routing` on.
+- [x] Internal Traefik (`infrastructure/traefik-internal/`, ClusterIP,
+      class `internal`, HTTP → HTTPS, HSTS) and `coredns-custom` with one
+      line per app.
+- [x] Gateway: allow me through tunnels, default deny for everyone else
+      (rule on *traffic destination: tunnel*; a rule on the 172.64 range
+      never matches).
+- [x] Virtual network `hgd1-admin` holds `10.10.0.0/16`; WARP stays on
+      `default` all day.
+- [x] Test app `whoami.buunk.org` reachable over WARP, blocked without the
+      allow rule.
+- [ ] Let's Encrypt over DNS-01: issuers are in `config/cert-manager/`;
+      waiting for a Cloudflare API token (DNS edit on `buunk.org`) as the
+      sops Secret `cloudflare-dns-token` in `cert-manager`. Then whoami on
+      staging, then production.
+- [x] Docs: [Internal access](https://jurrebuunk.github.io/hgd1-k8s/concepts/internal-access/),
+      [Publish an internal app](https://jurrebuunk.github.io/hgd1-k8s/how-to/publish-an-internal-app/).
+
+**Part 2, for others** (later):
+
+- [ ] WARP enrolment through Keycloak (Cloudflare's generic OIDC login) so
+      family enrol with their buunk account; my own enrolment and admin
+      stay on one-time PIN, so admin doesn't depend on k3s. Free plan: up
+      to 50 users.
+- [ ] Gateway allow rules per app and per Keycloak group (SNI hostname).
+- [ ] First real internal app: `lab-console` at `lab.buunk.org`; then
+      remove `whoami`.
 
 ## Needed from other repos
 

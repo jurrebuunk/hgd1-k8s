@@ -24,10 +24,12 @@ flowchart TB
    [GitOps](gitops.md).
 2. **Public access.** A Cloudflare Tunnel in the cluster; a route and a DNS
    record publish an app. See [Public access](public-access.md).
-3. **Postgres.** One small CloudNativePG cluster per app, backed up to S3.
+3. **Internal access.** A second tunnel for apps over WARP only, with HTTPS
+   from an internal Traefik. See [Internal access](internal-access.md).
+4. **Postgres.** One small CloudNativePG cluster per app, backed up to S3.
    See [Postgres](postgres.md).
-4. **Logins.** Keycloak at `auth.buunk.org`. See [Keycloak](keycloak.md).
-5. **Monitoring.** Pod logs and metrics into the hosts' stores. See
+5. **Logins.** Keycloak at `auth.buunk.org`. See [Keycloak](keycloak.md).
+6. **Monitoring.** Pod logs and metrics into the hosts' stores. See
    [Monitoring](monitoring.md).
 
 ## Decisions

@@ -14,6 +14,7 @@ pages.
 
 - :lucide-hammer: [**Build an app**](build-an-app.md): what the platform offers, where state goes, the checklist
 - :lucide-globe: [**Publish an app**](publish-an-app.md): a route and a DNS record
+- :lucide-shield-check: [**Publish an internal app**](publish-an-internal-app.md): over WARP only, with HTTPS
 - :lucide-database: [**Add a database**](add-a-database.md): a Postgres cluster, restores
 
 </div>

@@ -16,6 +16,16 @@ has a proxied CNAME to `464b884a-410d-4066-8946-0532c41f1978.cfargotunnel.com`.
 | `cloudreve.buunk.org` | Cloudreve (`cloudreve.cloudreve:80`) | |
 | `files-s3.buunk.org` | Cloudreve's S3 gateway (`s3-gateway.cloudreve:80`) | Only `/cloudreve/…` (the bucket); everything else 404 |
 
+## Internal hostnames
+
+Over WARP only (tunnel `hgd1-internal`, a hostname route each, no DNS
+record), HTTPS through the internal Traefik
+([Internal access](../concepts/internal-access.md)).
+
+| Hostname | To | Who | Notes |
+| --- | --- | --- | --- |
+| `whoami.buunk.org` | `whoami.whoami:80` (`platform/whoami/`) | me | Test app; goes once a real internal app exists |
+
 ## Apps
 
 | App | Address | Repo | Pointer | Database | Bucket |
