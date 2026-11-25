@@ -1,0 +1,10 @@
+# The tunnel hgd1-internal: internal apps over WARP (plan step 10). No
+# public routes: Cloudflare sends private hostname routes (one per app,
+# e.g. whoami.buunk.org) here, cloudflared looks the name up in CoreDNS
+# (coredns-custom: the name → the internal Traefik) and connects to it.
+tunnel: 46adc72d-f011-4a1d-b7fd-b4c22f3a8447 # hgd1-internal
+credentials-file: /etc/cloudflared/credentials/credentials.json
+warp-routing:
+  enabled: true
+ingress:
+  - service: http_status:404

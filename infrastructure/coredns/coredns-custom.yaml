@@ -1,0 +1,14 @@
+# Names of internal apps (plan step 10) inside the cluster: cloudflared of
+# the tunnel hgd1-internal looks up the name a WARP client asked for, and
+# this points it at the internal Traefik. One line per internal app, the
+# same name as its hostname route. k3s's CoreDNS imports *.override from
+# this ConfigMap (optional, so k3s doesn't own it). Public apps are not
+# here: they resolve to Cloudflare like anywhere else.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  internal.override: |
+    rewrite name exact whoami.buunk.org traefik-internal.traefik-internal.svc.cluster.local answer auto

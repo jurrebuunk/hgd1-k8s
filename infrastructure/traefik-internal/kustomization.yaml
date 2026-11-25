@@ -1,0 +1,9 @@
+# The internal Traefik, and what its pods may connect to: the Kubernetes API
+# (it watches Ingresses) and the apps in the cluster.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: traefik-internal
+resources: [release.yaml]
+components:
+  - ../../components/egress/default
+  - ../../components/egress/kube-api

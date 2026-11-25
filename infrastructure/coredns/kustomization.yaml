@@ -1,0 +1,5 @@
+# Additions to k3s's CoreDNS. (kube-system's egress policies are in
+# metrics-server/, the namespace's other kustomization.)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources: [coredns-custom.yaml]

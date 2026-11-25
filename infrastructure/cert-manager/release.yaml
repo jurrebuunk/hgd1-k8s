@@ -30,6 +30,9 @@ spec:
   upgrade: { remediation: { retries: 3 } }
   values:
     crds: { enabled: true, keep: true }
+    # DNS-01 (Let's Encrypt for internal apps, config/cert-manager): check
+    # the TXT record at public resolvers, not through the router's cache.
+    extraArgs: [--dns01-recursive-nameservers-only, "--dns01-recursive-nameservers=1.1.1.1:53,9.9.9.9:53"]
     resources: { requests: { cpu: 10m, memory: 64Mi } }
     webhook: { resources: { requests: { cpu: 10m, memory: 32Mi } } }
     cainjector: { resources: { requests: { cpu: 10m, memory: 64Mi } } }

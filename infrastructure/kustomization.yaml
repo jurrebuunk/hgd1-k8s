@@ -4,6 +4,9 @@ resources:
   - metrics-server
   - local-path
   - cloudflared
+  - cloudflared-internal
+  - traefik-internal
+  - coredns
   - cert-manager
   - cloudnative-pg
   - monitoring
