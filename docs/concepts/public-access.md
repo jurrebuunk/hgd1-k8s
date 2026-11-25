@@ -49,6 +49,23 @@ Every hostname needs a **proxied** CNAME in the `buunk.org` zone to
 zone has MX records), so it's one record per hostname, made by hand for now
 ([external-dns: #1](https://github.com/jurrebuunk/hgd1-k8s/issues/1)).
 
+### HTTPS only
+
+Set on the whole `buunk.org` zone in Cloudflare (SSL/TLS → Edge
+Certificates), so every new hostname gets it without a step:
+
+| Setting | Value | Effect |
+| --- | --- | --- |
+| Always Use HTTPS | on | `http://` answers 301 to the same `https://` URL |
+| HSTS | `max-age=31536000`, no `includeSubDomains`, no preload | Browsers that saw a hostname once only use HTTPS for it for a year |
+| Minimum TLS version | 1.2 | TLS 1.0 and 1.1 are refused |
+| SSL mode | Full (strict) | Unchanged |
+
+These also apply to the zone's other proxied hostnames (`home`,
+`tapset`), which serve HTTPS too. HSTS stays per hostname: with
+`includeSubDomains` or preload, every name under `buunk.org` would have to
+serve HTTPS forever.
+
 ### Limits
 
 - **100 MB per request** on the free plan: apps that upload large files must

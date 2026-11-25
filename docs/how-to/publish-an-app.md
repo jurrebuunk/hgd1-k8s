@@ -44,7 +44,12 @@ the API):
 
 ```sh
 curl -sI -A "Mozilla/5.0" https://notes.buunk.org/ | head -1
+curl -s -o /dev/null -w '%{http_code} %{redirect_url}\n' http://notes.buunk.org/   # 301 https://notes.buunk.org/
+curl -sI https://notes.buunk.org/ | grep -i strict-transport                        # max-age=31536000
 ```
+
+HTTP to HTTPS and HSTS come from the zone settings
+([Public access → HTTPS only](../concepts/public-access.md#https-only)); the app needs nothing for them.
 
 From outside the network too (a phone without WARP). Then add it to
 [Routes and apps](../reference/routes.md).
