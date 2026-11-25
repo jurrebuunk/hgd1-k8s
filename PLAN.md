@@ -353,13 +353,18 @@ flowchart LR
 - [x] Docs: [Internal access](https://jurrebuunk.github.io/hgd1-k8s/concepts/internal-access/),
       [Publish an internal app](https://jurrebuunk.github.io/hgd1-k8s/how-to/publish-an-internal-app/).
 
-**Part 2, for others** (later):
+**Part 2, for others:**
 
-- [ ] WARP enrolment through Keycloak (Cloudflare's generic OIDC login) so
-      family enrol with their buunk account; my own enrolment and admin
-      stay on one-time PIN, so admin doesn't depend on k3s. Free plan: up
-      to 50 users.
-- [ ] Gateway allow rules per app and per Keycloak group (SNI hostname).
+- [x] WARP enrolment through Keycloak: client `cloudflare-zero-trust`, role
+      `warp` for `admins` and `family`; Cloudflare's login method
+      "buunk (Keycloak)" with the claims `roles` and `groups`. My own
+      enrolment needs the one-time PIN, and the Keycloak policy excludes my
+      email, so a Keycloak account can't pass as me or reach the admin
+      network. Free plan: up to 50 users.
+- [x] Gateway rules per app and group: the pattern (SNI hostname and
+      `groups=<group>` claim) is checked; added per app when it's published.
+- [ ] Try it with a real family account (sign in to WARP, see the
+      default deny until an app allows them).
 - [ ] First real internal app: `lab-console` at `lab.buunk.org`; then
       remove `whoami`.
 

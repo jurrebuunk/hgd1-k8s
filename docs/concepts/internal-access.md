@@ -12,8 +12,8 @@ involved, so the strict VLANs stay as they are.
 
 !!! info "At a glance"
 
-    **Status** <span class="status">Part 1 running</span> (certificates wait
-    for a DNS token) · **Tunnel** `hgd1-internal`
+    **Status** <span class="status">Running</span> (certificates wait
+    for a DNS token) · **Sign-in** one-time PIN (me) or Keycloak (`warp` role) · **Tunnel** `hgd1-internal`
     (`46adc72d-f011-4a1d-b7fd-b4c22f3a8447`) · **Ingress class** `internal`
     · **How-to** [Publish an internal app](../how-to/publish-an-internal-app.md)
     · **Roadmap** [step 10](../reference/roadmap.md#10-internal-apps-over-warp)
@@ -69,12 +69,46 @@ Gateway network rules, in order (Zero Trust → Traffic policies → Network):
 | 2000 | Block | `10.10.0.0/16` | everyone else |
 | 2100 | Block | Everything leaving through a tunnel | everyone else |
 
-Rule 2100 is the default deny for internal apps. It matches on *Traffic
+Rule 2100 is the default deny for internal apps. An app for others gets an
+allow rule above it per app and group, on the hostname and the Keycloak
+group:
+
+```text
+traffic:  net.sni.host == "notes.buunk.org"
+identity: any(identity.oidc_claims[*] == "groups=family")
+```
+
+Rule 2100 It matches on *Traffic
 destination: Cloudflare Tunnel* (`net.offramp.type`), not on the
 `172.64.128.0/20` addresses: Gateway evaluates network rules after it has
 mapped those back, so a rule on them never matches. The tunnel selector
 also covers plain HTTP. Rules for other people per app use the hostname
 (`net.sni.host`, HTTPS only).
+
+### Signing in to WARP
+
+Devices enrol at `https://buunk.cloudflareaccess.com/warp` (team `buunk`),
+with two login methods:
+
+| Login method | Policy on the WARP enrolment app | For |
+| --- | --- | --- |
+| One-time PIN | *Allow Jurre (one-time PIN only)*: my email, and the login must be the PIN | Me, and so the admin network: it doesn't depend on Keycloak or k3s |
+| buunk (Keycloak) | *Allow buunk accounts with role warp*: claim `roles` contains `warp`, login through Keycloak, my email excluded | `admins` and `family` (Keycloak client `cloudflare-zero-trust`) |
+
+Why the PIN and the exclusion: Gateway's admin rules go by email, and people
+can change their own email in Keycloak. Without them, a Keycloak account set
+to my email would enrol as me and reach `10.10.0.0/16`.
+
+Gateway sees the claims `roles` and `groups` of the Keycloak login
+(`identity.oidc_claims`). A group change counts after the person signs in
+to WARP again (Re-authenticate in the client). Someone enrolled through
+Keycloak reaches nothing internal until an app's allow rule names their
+group (rule 2100), and never the site (rule 2000).
+
+To let someone in: put them in `family` in Keycloak; they install the
+Cloudflare One client, enter team `buunk`, and choose **buunk (Keycloak)**.
+To remove them: take them out of the group and revoke their device in Zero
+Trust → Devices.
 
 ### Admin only when needed
 
