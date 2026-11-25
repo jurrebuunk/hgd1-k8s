@@ -1,0 +1,11 @@
+# CloudNativePG and its Barman Cloud plugin, and what their pods may connect
+# to: the Kubernetes API, and S3 for the plugin. (The Postgres pods
+# themselves get components/postgres's policy in each app's namespace.)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: cnpg-system
+resources: [release.yaml]
+components:
+  - ../../components/egress/default
+  - ../../components/egress/kube-api
+  - ../../components/egress/s3

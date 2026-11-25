@@ -1,0 +1,16 @@
+# Only the operator uses the Kubernetes API; Keycloak itself is public, so
+# it doesn't get it (it finds its peers through DNS).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-operator-kube-api
+spec:
+  podSelector:
+    matchLabels: { app.kubernetes.io/name: keycloak-operator }
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - ipBlock: { cidr: 10.10.40.11/32 }
+        - ipBlock: { cidr: 10.10.40.12/32 }
+        - ipBlock: { cidr: 10.10.40.13/32 }
+      ports: [{ protocol: TCP, port: 6443 }]

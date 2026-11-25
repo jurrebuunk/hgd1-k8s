@@ -22,6 +22,11 @@ the files listed; update one at a time.
 | Keycloak operator | 26.8.2 | `keycloak` | `infrastructure/keycloak-operator/` | [Keycloak](../concepts/keycloak.md) |
 | keycloak-config-cli | 6.5.1-26 | `keycloak` | `platform/keycloak-realm/job.yaml` | Applies the realms |
 
+**Network policies** (what pods may connect to) are in the same folders as
+each component (`networkpolicy.yaml`, and `components/egress` through each
+folder's `kustomization.yaml`); Flux's own are patched in
+`clusters/hgd1/flux-system/kustomization.yaml`.
+
 Not here on purpose: Traefik and ServiceLB (disabled in k3s; public apps use
 the tunnel), ceph-csi (no Ceph block storage for pods). CoreDNS comes with
 k3s from `nix-hgd1-cluster`.

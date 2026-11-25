@@ -1,0 +1,10 @@
+# vmagent, kube-state-metrics and Vector, and what their pods may connect
+# to: the Kubernetes API, the kubelets and the hosts' VictoriaMetrics and
+# VictoriaLogs. Only this namespace may reach those.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: monitoring
+resources: [release.yaml, networkpolicy.yaml]
+components:
+  - ../../components/egress/default
+  - ../../components/egress/kube-api

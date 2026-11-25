@@ -1,0 +1,8 @@
+# cert-manager: the release, and what its pods may connect to (the Kubernetes API).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: cert-manager
+resources: [release.yaml]
+components:
+  - ../../components/egress/default
+  - ../../components/egress/kube-api

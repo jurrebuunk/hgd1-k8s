@@ -1,0 +1,30 @@
+# metrics-server reads every node's kubelet.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-kubelets
+spec:
+  podSelector:
+    matchLabels: { app.kubernetes.io/name: metrics-server }
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - ipBlock: { cidr: 10.10.40.0/24 }
+      ports: [{ protocol: TCP, port: 10250 }]
+---
+# CoreDNS forwards names it doesn't own to the router (/etc/k3s-resolv.conf
+# on the nodes: the k8s VLAN's gateway).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-dns-upstream
+spec:
+  podSelector:
+    matchLabels: { k8s-app: kube-dns }
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - ipBlock: { cidr: 10.10.40.1/32 }
+      ports:
+        - { protocol: UDP, port: 53 }
+        - { protocol: TCP, port: 53 }

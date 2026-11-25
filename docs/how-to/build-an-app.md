@@ -77,6 +77,26 @@ Why: the Ceph HDDs are reliable but slow (three laptop disks over 1 GbE), and
 the NVMe is fast but local to one host. Databases get speed from NVMe and
 safety from replicating themselves; files get safety from Ceph through S3.
 
+## Network
+
+Pods may connect to the cluster and the internet, but not to the site
+(`10.10.0.0/16`: the hosts' metrics and logs, the kubelets, SSH, the
+router) or other private addresses. An app's namespace says so with
+NetworkPolicies from `components/egress`, and adds only what it needs:
+
+```yaml
+# deploy/kustomization.yaml
+components:
+  - ../components/egress/default   # always
+  - ../components/egress/s3        # it uses s3.lan.buunk.org
+  # ../components/egress/kube-api  # it uses the Kubernetes API (operators)
+```
+
+A Postgres `Cluster` gets its own policy from `components/postgres` (API and
+S3 for backups), with or without these. Something else on the site that an
+app really needs is a policy in its own repo, for exactly that address and
+port; an app that is public should get as little as possible.
+
 ## Spreading
 
 Use the zone label so replicas don't end up on one physical machine:
@@ -186,6 +206,8 @@ per app under `buunk.org`, HTTPS from an internal Traefik with cert-manager
 - [ ] Its own Postgres `Cluster` with `components/postgres` if it needs a
       database (never a chart's built-in one).
 - [ ] Secrets through sops ([Manage secrets](manage-secrets.md)), never plain text.
+- [ ] `components/egress/default` in its kustomization, plus `s3` or
+      `kube-api` only if it uses them ([Network](#network)).
 - [ ] Requests and limits set: a node has 4 GiB of RAM in total.
 - [ ] Tested: `labctl vm stop <vm>` on the VM it runs on, check the app keeps
       working, then `labctl vm start <vm>`.

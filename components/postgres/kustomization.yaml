@@ -4,7 +4,8 @@
 #   components: [../../components/postgres]
 #
 # It adds: servers on local-path in different zones, WAL archived to S3
-# within 5 minutes, a weekly full copy, 14 days kept, modest resources. The
+# within 5 minutes, a weekly full copy, 14 days kept, modest resources, and
+# what the Postgres pods may connect to (networkpolicy.yaml). The
 # app's own Cluster fields (instances, storage size, bootstrap) stay its own.
 apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
@@ -12,6 +13,7 @@ resources:
   - backup-s3.sops.yaml
   - objectstore.yaml
   - scheduledbackup.yaml
+  - networkpolicy.yaml
 patches:
   - target: { group: postgresql.cnpg.io, kind: Cluster }
     patch: |-

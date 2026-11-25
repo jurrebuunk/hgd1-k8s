@@ -6,8 +6,10 @@ resources:
   - bootstrap-admin.sops.yaml
   - bootstrap-service.sops.yaml
   - keycloak.yaml
+  - networkpolicy.yaml
 components:
   - ../../components/postgres
+  - ../../components/egress/default
 # The login theme flatwork (theme/), mounted into Keycloak by keycloak.yaml.
 configMapGenerator:
   - name: keycloak-theme

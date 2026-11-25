@@ -1,0 +1,17 @@
+# Pods reach other pods and Services (DNS included) and the internet, but
+# no private address: not the site (10.10.0.0/16: metrics, logs, kubelets,
+# hosts, router), not the modem's LAN. Exceptions are separate policies.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-default
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector: {}
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]

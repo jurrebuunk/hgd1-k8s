@@ -3,3 +3,23 @@ kind: Kustomization
 resources:
 - gotk-components.yaml
 - gotk-sync.yaml
+patches:
+  # Flux's own allow-egress lets its controllers connect anywhere, the whole
+  # site included. Like every namespace (components/egress): the cluster,
+  # the internet (Git, Helm and OCI sources) and the Kubernetes API.
+  - target: { kind: NetworkPolicy, name: allow-egress }
+    patch: |-
+      - op: replace
+        path: /spec/egress
+        value:
+          - to:
+              - namespaceSelector: {}
+          - to:
+              - ipBlock:
+                  cidr: 0.0.0.0/0
+                  except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]
+          - to:
+              - ipBlock: { cidr: 10.10.40.11/32 }
+              - ipBlock: { cidr: 10.10.40.12/32 }
+              - ipBlock: { cidr: 10.10.40.13/32 }
+            ports: [{ protocol: TCP, port: 6443 }]

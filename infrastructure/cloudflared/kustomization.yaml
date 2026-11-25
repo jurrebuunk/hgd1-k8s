@@ -4,6 +4,8 @@ namespace: cloudflared
 resources:
   - deployment.yaml
   - credentials.sops.yaml
+components:
+  - ../../components/egress/default # Cloudflare's edge and the Services it routes to
 # A new hash in the name on every change rolls cloudflared, which only reads
 # its config at start.
 configMapGenerator:

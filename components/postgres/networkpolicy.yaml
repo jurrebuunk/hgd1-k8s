@@ -1,0 +1,28 @@
+# The Postgres pods (servers and their jobs): the cluster and the internet
+# like everything else, plus the Kubernetes API (CloudNativePG's instance
+# manager) and S3 (WAL and backups). Complete on its own, so an app's
+# database keeps working whether or not the app uses components/egress.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-postgres
+spec:
+  podSelector:
+    matchExpressions:
+      - { key: cnpg.io/cluster, operator: Exists }
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector: {}
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]
+    - to:
+        - ipBlock: { cidr: 10.10.40.11/32 }
+        - ipBlock: { cidr: 10.10.40.12/32 }
+        - ipBlock: { cidr: 10.10.40.13/32 }
+      ports: [{ protocol: TCP, port: 6443 }]
+    - to:
+        - ipBlock: { cidr: 10.10.30.10/32 }
+      ports: [{ protocol: TCP, port: 443 }]

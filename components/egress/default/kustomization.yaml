@@ -1,0 +1,4 @@
+# Every namespace with pods: the cluster and the internet, not the site.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+resources: [networkpolicy.yaml]

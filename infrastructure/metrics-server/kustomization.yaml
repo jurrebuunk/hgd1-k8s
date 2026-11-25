@@ -1,0 +1,10 @@
+# metrics-server, and what kube-system's pods may connect to: the
+# Kubernetes API for everything there (metrics-server, CoreDNS, k3s's
+# jobs), the kubelets for metrics-server, the router's DNS for CoreDNS.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+resources: [release.yaml, networkpolicy.yaml]
+components:
+  - ../../components/egress/default
+  - ../../components/egress/kube-api

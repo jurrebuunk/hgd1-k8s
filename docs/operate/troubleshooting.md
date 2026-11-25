@@ -37,6 +37,8 @@ labctl logs --since 30m 'namespace:<ns>'
 | `Pending` with `didn't match pod topology spread constraints` | Not enough zones free (a host is down, or a node cordoned); expected until it's back |
 | `Pending` on a `local-path` volume | The node holding that volume is down; it comes back with the node, or the copy takes over (Postgres) |
 | `OOMKilled` | Raise the limit, carefully: a node has 4 GiB |
+| A connection to an address on the site (`10.10.x.x`) or another private address times out | The namespace's egress policies don't allow it (`kubectl -n <ns> get networkpolicy`); add a policy for exactly that address and port ([Build an app → Network](../how-to/build-an-app.md#network)) |
+| A namespace with pods has no `egress-default` | `kubectl get networkpolicy -A \| grep egress-default` lists the covered ones; add `components/egress/default` to the missing one |
 | A name like `foo.ns.svc.cluster.local` doesn't resolve | Pods use k3s's own resolver file without the `lan.buunk.org` search domain (OPNsense answers NOERROR for unknown names); check CoreDNS, not the router |
 
 ## Public access

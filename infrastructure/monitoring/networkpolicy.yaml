@@ -1,0 +1,21 @@
+# vmagent scrapes the kubelets (metrics and cAdvisor) and writes to
+# VictoriaMetrics on the hosts' storage addresses; Vector writes to
+# VictoriaLogs there.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-monitoring
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - ipBlock: { cidr: 10.10.40.0/24 }
+      ports: [{ protocol: TCP, port: 10250 }]
+    - to:
+        - ipBlock: { cidr: 10.10.30.11/32 }
+        - ipBlock: { cidr: 10.10.30.12/32 }
+        - ipBlock: { cidr: 10.10.30.13/32 }
+      ports:
+        - { protocol: TCP, port: 8428 }
+        - { protocol: TCP, port: 9428 }

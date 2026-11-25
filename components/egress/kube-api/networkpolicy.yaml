@@ -1,0 +1,15 @@
+# The Kubernetes API: the Service kubernetes.default forwards to the three
+# servers' own addresses, and the policy sees those.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-kube-api
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - ipBlock: { cidr: 10.10.40.11/32 } # hgd1-k8m01
+        - ipBlock: { cidr: 10.10.40.12/32 } # hgd1-k8m02
+        - ipBlock: { cidr: 10.10.40.13/32 } # hgd1-k8m03
+      ports: [{ protocol: TCP, port: 6443 }]
