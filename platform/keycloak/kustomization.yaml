@@ -11,7 +11,7 @@ resources:
 components:
   - ../../components/postgres
   - ../../components/egress/default
-# The login theme flatwork (theme/), mounted into Keycloak by keycloak.yaml.
+# The theme flatwork (theme/: login, and email in theme/email/), mounted into Keycloak by keycloak.yaml.
 configMapGenerator:
   - name: keycloak-root-redirect
     files: [nginx.conf=root-redirect.conf]
@@ -34,5 +34,14 @@ configMapGenerator:
       - theme/geist-500.woff2
       - theme/geist-600.woff2
       - theme/plex-mono-400.woff2
+      # The email theme (theme/email/), one key per file.
+      - email-theme.properties=theme/email/theme.properties
+      - email-template.ftl=theme/email/html/template.ftl
+      - email-password-reset.ftl=theme/email/html/password-reset.ftl
+      - email-email-verification.ftl=theme/email/html/email-verification.ftl
+      - email-executeActions.ftl=theme/email/html/executeActions.ftl
+      - email-email-update-confirmation.ftl=theme/email/html/email-update-confirmation.ftl
+      - email-messages_en.properties=theme/email/messages/messages_en.properties
+      - email-messages_nl.properties=theme/email/messages/messages_nl.properties
 configurations:
   - kustomizeconfig.yaml

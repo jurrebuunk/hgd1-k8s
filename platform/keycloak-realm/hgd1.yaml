@@ -6,6 +6,7 @@ realm: hgd1
 enabled: true
 displayName: buunk
 loginTheme: flatwork
+emailTheme: flatwork
 rememberMe: true
 registrationAllowed: false
 resetPasswordAllowed: true

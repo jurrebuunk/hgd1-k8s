@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, copyFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, copyFile, cp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -20,6 +20,8 @@ for (const file of ['flatwork.css', 'auth.css']) await copyFile(join(root, file)
 await copyFile(join(root, 'auth.js'), join(login, 'resources/js/auth.js'));
 await copyFile(join(root, 'favicon.svg'), join(login, 'resources/img/favicon.svg'));
 for (const font of ['geist-400', 'geist-500', 'geist-600', 'plex-mono-400']) await copyFile(join(root, `${font}.woff2`), join(login, `resources/fonts/${font}.woff2`));
+// The email theme is hand-written: copied as it is.
+await cp(join(root, 'email'), join(staging, 'flatwork/email'), { recursive: true });
 const child = spawn('docker', ['run', '--rm', '--name', 'buunk-theme-preview',
   '--network', 'host',
   '-v', `${staging}/flatwork:/opt/keycloak/themes/flatwork:ro`,

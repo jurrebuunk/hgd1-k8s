@@ -42,6 +42,14 @@ retain Keycloak's own scripts. No shipping raster artwork is used; the binary
 wordmark is deterministic text geometry from the supplied source.
 
 **Verdict:** handoff retained, with deliberate omissions for unsupported
-production features (SMTP/reset, registration, social providers, device trust,
+production features (registration, social providers, device trust,
 and unconfigured recovery) rather than non-functional controls. See README
 for verification commands, generated-file ownership, and deployment.
+
+## Emails
+
+Same tokens in light mode: email clients invert or ignore dark designs, so the
+emails are a white card on `#f6f5f5` with the muted blue-grey button, no
+wordmark, binary field or footer (chosen from three directions: light, dark,
+plain). The action link is also shown as small grey mono text, because action
+tokens are long.

@@ -3,6 +3,8 @@
   "enabled": true,
   "sslRequired": "none",
   "loginTheme": "flatwork",
+  "emailTheme": "flatwork",
+  "displayName": "buunk",
   "rememberMe": true,
   "resetPasswordAllowed": true,
   "registrationAllowed": true,

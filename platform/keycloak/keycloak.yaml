@@ -39,7 +39,7 @@ spec:
   resources:
     requests: { cpu: 100m, memory: 640Mi }
     limits: { memory: 1Gi }
-  # The login theme flatwork from the config map keycloak-theme.
+  # The theme flatwork (login and email) from the config map keycloak-theme.
   unsupported:
     podTemplate:
       spec:
@@ -68,3 +68,11 @@ spec:
                 - { key: geist-500.woff2, path: login/resources/fonts/geist-500.woff2 }
                 - { key: geist-600.woff2, path: login/resources/fonts/geist-600.woff2 }
                 - { key: plex-mono-400.woff2, path: login/resources/fonts/plex-mono-400.woff2 }
+                - { key: email-theme.properties, path: email/theme.properties }
+                - { key: email-template.ftl, path: email/html/template.ftl }
+                - { key: email-password-reset.ftl, path: email/html/password-reset.ftl }
+                - { key: email-email-verification.ftl, path: email/html/email-verification.ftl }
+                - { key: email-executeActions.ftl, path: email/html/executeActions.ftl }
+                - { key: email-email-update-confirmation.ftl, path: email/html/email-update-confirmation.ftl }
+                - { key: email-messages_en.properties, path: email/messages/messages_en.properties }
+                - { key: email-messages_nl.properties, path: email/messages/messages_nl.properties }
