@@ -4,3 +4,4 @@ kind: Kustomization
 # apps' manifests live in their own repos.
 resources:
   - cloudreve.yaml
+  - hub.yaml

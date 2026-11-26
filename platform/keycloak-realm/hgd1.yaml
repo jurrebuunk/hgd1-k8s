@@ -93,6 +93,46 @@ clients:
           access.token.claim: "false"
           userinfo.token.claim: "false"
           introspection.token.claim: "false"
+  # buunk-hub (https://hub.buunk.org, repo buunk-hub): the people hub. The
+  # server does the login and keeps the tokens. It shows each person the
+  # apps they have a role for, so every client's roles go into its ID token
+  # as resource_access (it has no roles of its own). offline_access: its
+  # sessions last 30 days and it re-reads the roles hourly, longer than the
+  # SSO session lives. The secret comes from client-hub.sops.yaml.
+  - clientId: hub
+    name: buunk hub
+    enabled: true
+    protocol: openid-connect
+    publicClient: false
+    clientAuthenticatorType: client-secret
+    secret: $(env:HUB_CLIENT_SECRET)
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: false
+    serviceAccountsEnabled: false
+    frontchannelLogout: false
+    rootUrl: https://hub.buunk.org
+    baseUrl: /
+    redirectUris:
+      - https://hub.buunk.org/auth/callback
+    webOrigins: []
+    attributes:
+      pkce.code.challenge.method: S256
+      post.logout.redirect.uris: https://hub.buunk.org/auth/signed-out
+    defaultClientScopes: [basic, profile, email]
+    optionalClientScopes: [offline_access]
+    protocolMappers:
+      - name: client roles
+        protocol: openid-connect
+        protocolMapper: oidc-usermodel-client-role-mapper
+        config:
+          claim.name: resource_access.${client_id}.roles
+          jsonType.label: String
+          multivalued: "true"
+          id.token.claim: "true"
+          access.token.claim: "false"
+          userinfo.token.claim: "false"
+          introspection.token.claim: "false"
   # Cloudflare Zero Trust (team buunk): signing in to WARP with a buunk
   # account. Cloudflare lets a device enrol only with the role warp; the
   # groups go along as the claim "groups" for Gateway rules per app

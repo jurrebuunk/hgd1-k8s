@@ -54,6 +54,7 @@ keycloak-config-cli with `$(env:…)`; the app repo has the same value.
 | App | Client | Roles → groups |
 | --- | --- | --- |
 | Cloudreve | `cloudreve` | `admins` → `cloudreve-admin` (Cloudreve's Admin group, not a Keycloak admin); `family`, `friends` → `cloudreve-user`; no role, no access |
+| buunk-hub | `hub` | No roles of its own: it reads every client's roles (`resource_access` in the ID token) to show each person their apps; asks for `offline_access` for 30-day sessions |
 | WARP (Cloudflare Zero Trust) | `cloudflare-zero-trust` | `admins`, `family` → `warp` (may enrol a device; not the admin network); groups go along as the claim `groups` for Gateway rules. See [Internal access](internal-access.md#signing-in-to-warp) |
 
 Cloudreve's OIDC login is a Pro feature upstream; hgd1-cloudreve adds it with

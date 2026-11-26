@@ -1,0 +1,33 @@
+# The client secret of the Keycloak client hub. keycloak-config-cli puts it
+# in the realm ($(env:HUB_CLIENT_SECRET) in hgd1.yaml); the same value is
+# deploy/oidc.sops.yaml in buunk-hub.
+apiVersion: v1
+kind: Secret
+metadata:
+    name: keycloak-client-hub
+stringData:
+    client-secret: ENC[AES256_GCM,data:L01tVL1dk4XYWVtMx8UovhN0XSG4gFpcDOgs0gjA7yHWR7OiENEw/fOPYoSdwavzqwFp+gyQG3CyfcJSVyA1xA==,iv:ZVdVVDCnomMxKQP4E14GFh3eg+e/JbNPx+/C5avl8AQ=,tag:rFE6LiqR3tKNy8I6aI3KRQ==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBlVjduRWJCcGZkN3RFQlJG
+            TzF4Y0xCemp3Ky9XVkVOMGJnVFV4ZC9aZEhjCjRLd3NzRHNjTG9TS3hCQnpoVXVG
+            ZElmbHQvc1RsQkJHNDBEM01UWko4blEKLS0tIGdzNnlPTGVHaW5RVDl1enR2Y0p2
+            Zm5Vd3FMTWpKU05ZM2lMWkdKVnlTZ2cK1zCCroUX7kO1DHqODixIs5osUJafCr9K
+            h/Q5uNu4pwsMcqSA79JvqYuppdCE2dbMPxaosgGCMHYFaCR1CcWhuw==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1fharluqqx8n8clz5an6qte8hgqrkawjz6sy23humd2awzr0vq5tsvv6xgf
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAyYnJ3cE5HL2RJSXkrcjE4
+            L2xRWmErdmoyUkhZSm9yR1AxYnNSeEZpV2hrCmR3aGdtNzkybUMrVVBHMU90b1Mz
+            Mi82dFIrTUkzby9jemlkcERUS0dFeHcKLS0tIEJRbEsrcldSTFExNXhERjFsTGgv
+            NWlvQkd6cVpOYnpJWFV1NUdnd3FzdUkKCmzJLqPjEg+uJG0H9JQfMPDEGPCcy0FJ
+            cH6lXEDMUy97mqcz1RO8QFlTvkvm/ZP35DBy6QrTTpTNyHAW214LlQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age14lsxk30xq82ywvkf4l8psk55a0tkls87qx3k6u0zllyjt9tpwawsdgycxx
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-11-26T14:03:17Z"
+    mac: ENC[AES256_GCM,data:OocbR1DwOqKiLuXC24i5uhLeZF4Bb/7Bi1H1F7VXgO+BqcP39Ya5BK+YcqAXxU4j75KYqa3kt+W64Tc5TTaBmnIHqWVSqx1tWlcz/yF4FvgMW2HfoYOcGLw+Kj8xKbwiXkW2ElboVzwzSSiEM5U+4gIjXsGh1tZwsm1nKuywlHE=,iv:LJzaAXxJIAL+2KR6/Tp4+NyJxIr9IiUYHEKLphOF9nk=,tag:UqDl+uuebUo2I5aWKimfUg==,type:str]
+    version: 3.13.3

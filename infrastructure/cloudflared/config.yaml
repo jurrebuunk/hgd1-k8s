@@ -27,4 +27,7 @@ ingress:
     service: http://s3-gateway.cloudreve.svc.cluster.local:80
   - hostname: files-s3.buunk.org
     service: http_status:404
+  # buunk-hub: the people hub; everything behind its own sign-in.
+  - hostname: hub.buunk.org
+    service: http://hub.hub.svc.cluster.local:80
   - service: http_status:404
