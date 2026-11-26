@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: keycloak-smtp
+    namespace: keycloak
+stringData:
+    password: ENC[AES256_GCM,data:QjextSINFYnT0EFGA0VYYyenSfo=,iv:X+jvT1kAI8V59JTgsEJ5RVPrFG1Ygy8feON0j2YWyg8=,tag:dbz+smzTUDhTwDAT1aX5nA==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBLdXhkRjVNZm1CSXBFR1F1
+            Z3MwcytWdmoveDlpV1VVMzdlM1NVNzhVMVRNCmdKcm0rZ0I5SURNKytTRWpYZFNa
+            dDRiR2EvanREd1RiZjQyL3FnWkNvUjAKLS0tIFRsK0N2Rmd1ZGRQWXdCdm1VNnNY
+            Sjd5R0tOeUd2M2I4UkhsUmNwdnA5ajQKipcHaNMJK8wpgjlBgc5oYNO0eMXyxbO3
+            SBfgActxtTj4w6H5lIwF4zOLzy0rmFqGq9jv9ruVjavnRy5WP1YxZA==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1fharluqqx8n8clz5an6qte8hgqrkawjz6sy23humd2awzr0vq5tsvv6xgf
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNRG1qL0tRQkUrWTlJbjRs
+            dVI0bVpWWFBXaEpWVFJJYjJKaVQ5WVlnZVU0CkoyczQ3ZXNISnRlVEZIWFdsMGdK
+            eWx4T2N4UldvdWlxcDNXUWZEVllQaGcKLS0tIHhtQ1ptaGRJZHhnamlvRFljZTRi
+            azhGRmlGQ1BYT0dRc3E1YjhaaDFiYkkKWlvLscWAC93yoBR1bi5MiXjjCdjKRR1Q
+            wbtj+0+L3nESdJ5YVcg5ML+ljOANQ0feDHMh3VSI9/JCZBQpzkQuJg==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age14lsxk30xq82ywvkf4l8psk55a0tkls87qx3k6u0zllyjt9tpwawsdgycxx
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-11-26T12:00:59Z"
+    mac: ENC[AES256_GCM,data:ryLFqrfL9hhqf1PRi3NWj5oZvNlv285uTrFjP4fxApHQTHpJ8keXdg7XOJ8+WEnT+qZ3uJCJYPsfLRQmjAux8GQixB3+LowVZnNarHEk3Nk/JsllQwr6sTJkoaMASLV5I35lL6yaEzLG13EKTmibTOd3td7ENt2C81tX95Jg8eg=,iv:Wve6sxzYBoheXD7MIldKqXjo2PpyGbuIeX2M8VJrnEE=,tag:jloP71HgJOfTaq9DJ/H1bg==,type:str]
+    version: 3.13.3

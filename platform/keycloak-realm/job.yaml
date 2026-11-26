@@ -33,6 +33,8 @@ spec:
               valueFrom: { secretKeyRef: { name: keycloak-client-cloudreve, key: client-secret } }
             - name: CLOUDFLARE_ZT_CLIENT_SECRET
               valueFrom: { secretKeyRef: { name: keycloak-client-cloudflare-zero-trust, key: client-secret } }
+            - name: KEYCLOAK_SMTP_PASSWORD
+              valueFrom: { secretKeyRef: { name: keycloak-smtp, key: password } }
           resources:
             requests: { cpu: 50m, memory: 256Mi }
             limits: { memory: 512Mi }

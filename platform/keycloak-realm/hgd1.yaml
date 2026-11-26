@@ -8,13 +8,27 @@ displayName: buunk
 loginTheme: flatwork
 rememberMe: true
 registrationAllowed: false
-resetPasswordAllowed: false # no mail server yet
+resetPasswordAllowed: true
+verifyEmail: true
 loginWithEmailAllowed: true
 duplicateEmailsAllowed: false
 sslRequired: external
 bruteForceProtected: true
 failureFactor: 10
 passwordPolicy: "length(12) and notUsername and notEmail"
+# Mail through Migadu, buunk.org's mail provider (SPF, DKIM and DMARC are
+# set there), as the mailbox auth@: people know the site as auth.buunk.org,
+# not as Keycloak. Password from the Secret keycloak-smtp.
+smtpServer:
+  host: smtp.migadu.com
+  port: "465"
+  ssl: "true"
+  starttls: "false"
+  auth: "true"
+  user: auth@buunk.org
+  password: $(env:KEYCLOAK_SMTP_PASSWORD)
+  from: auth@buunk.org
+  fromDisplayName: buunk Account
 # Which group gets which app role. People join groups in the admin console.
 groups:
   - name: admins
