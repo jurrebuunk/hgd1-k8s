@@ -22,7 +22,7 @@ account for every app.
 | Database | `keycloak-db`, its own Postgres with 3 servers, backed up like every [cluster](postgres.md) |
 | Realm `hgd1` | For people and apps: settings, brute-force protection, password policy, groups `admins`, `family`, `friends` |
 | Realm `master` | Only for administrators; its address is `http://localhost:8080`, so it only works through the port-forward |
-| Public | Through the [tunnel](public-access.md); `/` redirects to `/realms/hgd1/account/` (sign-in when logged out); `/admin` and `/realms/master` answer 404 |
+| Public | Through the [tunnel](public-access.md); `/` redirects to the hub, `https://hub.buunk.org/`; `/admin` and `/realms/master` answer 404 |
 | Theme | `flatwork`: the buunk-auth design, built with `@flatwork-ui/react`; dark by default, light/system configurable |
 
 ## How it works
@@ -86,16 +86,17 @@ passwords.
 ## Operating
 
 **Direct access:** open <https://auth.buunk.org/>. The tunnel sends only the
-exact root to a fixed, non-cacheable 302 redirect to
-`https://auth.buunk.org/realms/hgd1/account/`; logged-out visitors see the login
-theme, logged-in visitors reach their account. All other realm traffic still
+exact root to a fixed, non-cacheable 302 redirect to the hub,
+`https://hub.buunk.org/` ([buunk-hub](https://github.com/jurrebuunk/buunk-hub)),
+which signs people in here. Keycloak's own account console stays at
+`/realms/hgd1/account/`. All other realm traffic still
 goes straight to Keycloak. Its admin hostname remains `http://localhost:8080`
 for port-forward access; do not make it public to fix a root redirect.
 
 When introducing this route, deploy and verify the redirect Service in
 `platform` before enabling its tunnel route in `infrastructure`, so traffic
 never points to a missing backend. Later config changes roll its hashed
-ConfigMap automatically. Check `curl -I https://auth.buunk.org/` for the account
+ConfigMap automatically. Check `curl -I https://auth.buunk.org/` for the hub
 Location, then verify `/admin/` and `/realms/master/` still return 404.
 
 **Theme changes:** edit `platform/keycloak/theme/src/`, then run `npm ci`,
