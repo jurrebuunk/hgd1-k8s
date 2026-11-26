@@ -30,6 +30,62 @@ smtpServer:
   password: $(env:KEYCLOAK_SMTP_PASSWORD)
   from: auth@buunk.org
   fromDisplayName: buunk Account
+# The user profile: Keycloak 26's default attributes, plus picture. This
+# block is the whole profile, so the defaults are written out: one left out
+# here would be removed. picture is the https:// address of the person's
+# profile picture. Only admins may set it (the hub, through its service
+# account); people see it, and the profile scope puts it in tokens as the
+# claim picture, so other apps (Cloudreve) can show it.
+# keycloak-config-cli 6.5 only applies userProfile when this (pre-Keycloak
+# 24) realm attribute is set; Keycloak itself ignores it.
+attributes:
+  userProfileEnabled: "true"
+userProfile:
+  attributes:
+    - name: username
+      displayName: ${username}
+      validations:
+        length: { min: 3, max: 255 }
+        username-prohibited-characters: {}
+        up-username-not-idn-homograph: {}
+      permissions: { view: [admin, user], edit: [admin, user] }
+      multivalued: false
+    - name: email
+      displayName: ${email}
+      validations:
+        email: {}
+        length: { max: 255 }
+      required: { roles: [user] }
+      permissions: { view: [admin, user], edit: [admin, user] }
+      multivalued: false
+    - name: firstName
+      displayName: ${firstName}
+      validations:
+        length: { max: 255 }
+        person-name-prohibited-characters: {}
+      required: { roles: [user] }
+      permissions: { view: [admin, user], edit: [admin, user] }
+      multivalued: false
+    - name: lastName
+      displayName: ${lastName}
+      validations:
+        length: { max: 255 }
+        person-name-prohibited-characters: {}
+      required: { roles: [user] }
+      permissions: { view: [admin, user], edit: [admin, user] }
+      multivalued: false
+    - name: picture
+      displayName: Profile picture
+      validations:
+        uri: {}
+        pattern: { pattern: "^https://.+", error-message: "The picture must be an https:// address." }
+        length: { max: 2048 }
+      permissions: { view: [admin, user], edit: [admin] }
+      multivalued: false
+  groups:
+    - name: user-metadata
+      displayHeader: User metadata
+      displayDescription: Attributes, which refer to user metadata
 # Which group gets which app role. People join groups in the admin console.
 groups:
   - name: admins
@@ -98,7 +154,9 @@ clients:
   # apps they have a role for, so every client's roles go into its ID token
   # as resource_access (it has no roles of its own). offline_access: its
   # sessions last 30 days and it re-reads the roles hourly, longer than the
-  # SSO session lives. The secret comes from client-hub.sops.yaml.
+  # SSO session lives. Its service account may manage users (users below),
+  # used only to set a person's picture. The secret comes from
+  # client-hub.sops.yaml.
   - clientId: hub
     name: buunk hub
     enabled: true
@@ -109,7 +167,7 @@ clients:
     standardFlowEnabled: true
     implicitFlowEnabled: false
     directAccessGrantsEnabled: false
-    serviceAccountsEnabled: false
+    serviceAccountsEnabled: true
     frontchannelLogout: false
     rootUrl: https://hub.buunk.org
     baseUrl: /
@@ -119,8 +177,13 @@ clients:
     attributes:
       pkce.code.challenge.method: S256
       post.logout.redirect.uris: https://hub.buunk.org/auth/signed-out
-    defaultClientScopes: [basic, profile, email]
-    optionalClientScopes: [offline_access]
+    # roles: client roles in its access token, which the admin API needs
+    # for the service account; service_account: Keycloak adds it to clients
+    # with a service account, so it is listed rather than removed each run.
+    defaultClientScopes: [basic, profile, email, roles, service_account]
+    # kc-admin-api: the admin API's audience, asked for only in the service
+    # account's token (Keycloak 26.8 refuses admin calls without it).
+    optionalClientScopes: [offline_access, kc-admin-api]
     protocolMappers:
       - name: client roles
         protocol: openid-connect
@@ -181,3 +244,12 @@ clients:
           access.token.claim: "false"
           userinfo.token.claim: "false"
           introspection.token.claim: "false"
+# Service accounts. Not people: an app's own login, with only the roles it
+# needs. The hub's sets the picture attribute (manage-users is the smallest
+# realm-management role that can write a user).
+users:
+  - username: service-account-hub
+    enabled: true
+    serviceAccountClientId: hub
+    clientRoles:
+      realm-management: [manage-users]
