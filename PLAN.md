@@ -228,7 +228,10 @@ Lives in its own repo, [hgd1-cloudreve](https://github.com/jurrebuunk/hgd1-cloud
 
 ### 9. Intranet, the people hub
 
-My own app, in its own repo, behind Keycloak: a hub for people. Everyone
+My own app, in its own repo [buunk-hub](https://github.com/jurrebuunk/buunk-hub)
+at `https://hub.buunk.org`, behind Keycloak: a hub for people. Its PLAN.md has
+the decisions (Go and React with `@flatwork-ui/react`, Postgres, S3) and the
+milestones; the items below are the summary. Everyone
 sees their profile and the apps they can use, a bit like Keycloak's account
 console but ours, and each person can make their own corner of it. Keycloak
 stays where accounts and passwords live.
