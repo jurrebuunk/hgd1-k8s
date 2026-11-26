@@ -22,7 +22,7 @@ account for every app.
 | Database | `keycloak-db`, its own Postgres with 3 servers, backed up like every [cluster](postgres.md) |
 | Realm `hgd1` | For people and apps: settings, brute-force protection, password policy, groups `admins`, `family`, `friends` |
 | Realm `master` | Only for administrators; its address is `http://localhost:8080`, so it only works through the port-forward |
-| Public | Through the [tunnel](public-access.md); `/` redirects to the hub, `https://hub.buunk.org/`; `/admin` and `/realms/master` answer 404 |
+| Public | Through the [tunnel](public-access.md); `/` and the account console redirect to the hub, `https://hub.buunk.org/`; `/admin` and `/realms/master` answer 404 |
 | Theme | `flatwork`: the buunk-auth design, built with `@flatwork-ui/react`; dark by default, light/system configurable |
 
 ## How it works
@@ -88,8 +88,11 @@ passwords.
 **Direct access:** open <https://auth.buunk.org/>. The tunnel sends only the
 exact root to a fixed, non-cacheable 302 redirect to the hub,
 `https://hub.buunk.org/` ([buunk-hub](https://github.com/jurrebuunk/buunk-hub)),
-which signs people in here. Keycloak's own account console stays at
-`/realms/hgd1/account/`. All other realm traffic still
+which signs people in here. Keycloak's account console
+(`/realms/hgd1/account/…`) is replaced by the hub as well: the tunnel sends it
+to the same redirect. People can't change their own password or set up a
+second factor until the hub can (*Forgot password?* on the sign-in page still
+works, by email). All other realm traffic still
 goes straight to Keycloak. Its admin hostname remains `http://localhost:8080`
 for port-forward access; do not make it public to fix a root redirect.
 
