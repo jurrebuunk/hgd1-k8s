@@ -12,3 +12,4 @@ metadata:
 data:
   internal.override: |
     rewrite name exact whoami.buunk.org traefik-internal.traefik-internal.svc.cluster.local answer auto
+    rewrite name exact mail.buunk.org traefik-internal.traefik-internal.svc.cluster.local answer auto

@@ -25,6 +25,7 @@ record), HTTPS through the internal Traefik
 
 | Hostname | To | Who | Notes |
 | --- | --- | --- | --- |
+| `mail.buunk.org` | Cypht (`cypht.cypht:80`) | me | Webmail for Migadu mailboxes; sign in with the mailbox password |
 | `whoami.buunk.org` | `whoami.whoami:80` (`platform/whoami/`) | me | Test app; goes once a real internal app exists |
 
 ## Apps
@@ -32,6 +33,7 @@ record), HTTPS through the internal Traefik
 | App | Address | Repo | Pointer | Database | Bucket |
 | --- | --- | --- | --- | --- | --- |
 | Cloudreve 4.19.1 | <https://cloudreve.buunk.org> | [`hgd1-cloudreve`](https://github.com/jurrebuunk/hgd1-cloudreve) | `apps/cloudreve.yaml` | `cloudreve-db` (2) | `cloudreve` (512 GB) |
+| Cypht 2.15.0 | <https://mail.buunk.org> (WARP) | [`hgd1-cypht`](https://github.com/jurrebuunk/hgd1-cypht) | `apps/cypht.yaml` | `cypht-db` (2) | |
 | buunk-hub | <https://hub.buunk.org> | [`buunk-hub`](https://github.com/jurrebuunk/buunk-hub) | `apps/hub.yaml` | `hub-db` (2) | `hub-avatars` (later) |
 
 ## Platform services
