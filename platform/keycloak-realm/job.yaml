@@ -35,6 +35,8 @@ spec:
               valueFrom: { secretKeyRef: { name: keycloak-client-cloudflare-zero-trust, key: client-secret } }
             - name: HUB_CLIENT_SECRET
               valueFrom: { secretKeyRef: { name: keycloak-client-hub, key: client-secret } }
+            - name: CYPHT_CLIENT_SECRET
+              valueFrom: { secretKeyRef: { name: keycloak-client-cypht, key: client-secret } }
             - name: KEYCLOAK_SMTP_PASSWORD
               valueFrom: { secretKeyRef: { name: keycloak-smtp, key: password } }
           resources:

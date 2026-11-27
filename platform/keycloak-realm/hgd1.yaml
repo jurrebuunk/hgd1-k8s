@@ -91,6 +91,7 @@ groups:
   - name: admins
     clientRoles:
       cloudreve: [cloudreve-admin]
+      cypht: [cypht-user]
       cloudflare-zero-trust: [warp]
   - name: family
     clientRoles:
@@ -107,6 +108,9 @@ roles:
         description: Administrator in Cloudreve (Cloudreve group Admin), not in Keycloak
       - name: cloudreve-user
         description: User in Cloudreve (Cloudreve group User)
+    cypht:
+      - name: cypht-user
+        description: May sign in to Cypht (mail.buunk.org) with their @buunk.org mailbox
     cloudflare-zero-trust:
       - name: warp
         description: May connect a device to WARP (internal apps); not the admin network
@@ -142,6 +146,44 @@ clients:
         protocolMapper: oidc-usermodel-client-role-mapper
         config:
           usermodel.clientRoleMapping.clientId: cloudreve
+          claim.name: roles
+          jsonType.label: String
+          multivalued: "true"
+          id.token.claim: "true"
+          access.token.claim: "false"
+          userinfo.token.claim: "false"
+          introspection.token.claim: "false"
+  # Cypht (https://mail.buunk.org over WARP, repo hgd1-cypht): webmail for
+  # the Migadu mailboxes, login through its keycloak_login module. The role
+  # goes into the ID token as "roles"; a person without it can't sign in.
+  # Only admins for now. The secret comes from client-cypht.sops.yaml.
+  - clientId: cypht
+    name: Mail
+    enabled: true
+    protocol: openid-connect
+    publicClient: false
+    clientAuthenticatorType: client-secret
+    secret: $(env:CYPHT_CLIENT_SECRET)
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: false
+    serviceAccountsEnabled: false
+    frontchannelLogout: false
+    rootUrl: https://mail.buunk.org
+    baseUrl: /
+    redirectUris:
+      - https://mail.buunk.org/?page=keycloak_callback
+    webOrigins: []
+    attributes:
+      pkce.code.challenge.method: S256
+    defaultClientScopes: [basic, profile, email]
+    optionalClientScopes: []
+    protocolMappers:
+      - name: roles
+        protocol: openid-connect
+        protocolMapper: oidc-usermodel-client-role-mapper
+        config:
+          usermodel.clientRoleMapping.clientId: cypht
           claim.name: roles
           jsonType.label: String
           multivalued: "true"

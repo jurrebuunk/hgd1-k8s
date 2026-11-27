@@ -1,0 +1,33 @@
+# The client secret of the Keycloak client cypht. keycloak-config-cli
+# puts it in the realm ($(env:CYPHT_CLIENT_SECRET) in hgd1.yaml); the
+# same value is deploy/keycloak.sops.yaml in hgd1-cypht.
+apiVersion: v1
+kind: Secret
+metadata:
+    name: keycloak-client-cypht
+stringData:
+    client-secret: ENC[AES256_GCM,data:ziC/0o+IwzD/TCXv0AFpkYo+HmlB2XgpLEikSKmhIXN4WAddry7S6py7zRQZPBU=,iv:9rAtEN+04ecBCa7MmtqYBK/XDnp54zLp4xYdXzusXmc=,tag:jiSDD7l1Ve5qK4qT8nrUEg==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAyVlBVc2lSdkRsWDgrNFkz
+            U1h2TGo1YTZwVUY5OWV0YlpxbWdDQnlmUkI0CjcxZGMzaHpnNjlvVlJRb052RWdt
+            R0RjZVd3Yjl3SnNidXUraU9CVllSSjAKLS0tIE5CQVA2OTNWOCtEdGFHWjZKTDBQ
+            QmxBVXRTUkFRKzdlTElQMW00TEZOYjQKvkq3njafaOSx7+iyXW5Px6/0Ya3vLX82
+            vLLJ0MorJUc06/FcOT0k6V6EoKi+sNhC6sdXbnYIumzmL4yQqM1lTA==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1fharluqqx8n8clz5an6qte8hgqrkawjz6sy23humd2awzr0vq5tsvv6xgf
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzdEZITVoyZ3QvK0F1UlNa
+            cDdSOVlGYXRsSEJMWjJWeFhsOFVTMVVXaTFzCnNIVjNBeXJIamNNM3RLbUoyM0F3
+            Smk2ZDBObDZqa3JJYWprZmhUVFJTRzQKLS0tIDhVUlZGZXRIeTQ1YThQMVcxMXh2
+            UUNkcFcxc1I4TjZQbk1IT1NnY1UrbFUKWS9uU3Ek23B3ZuZ2ALTlSBj5z9r3Dppq
+            buMKKtLcV7YGzZIbr94dDHYKfNKoICX4+yr6D75imxDgghQHiEAarw==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age14lsxk30xq82ywvkf4l8psk55a0tkls87qx3k6u0zllyjt9tpwawsdgycxx
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-11-27T19:46:50Z"
+    mac: ENC[AES256_GCM,data:JcUTg+jpjfFGSxe3hJg1kFbmYTEfUtZvIoXWgJHPyrNlAHRNrbYzBJaAwfinejR6FMYjZ0NExhRr6N4owPw9MrnClSsNi++CqaHCDgmZxWi8iSpk3hiD3ko05OpqJdM8gB5oi6W4YQKMrzYvvoX88t7BJITi56KKeMoz4SluuO0=,iv:QA4+25eLGHP1DiIgQt4X2TgfqUPpSm6VyD2DKrlZF6U=,tag:EhhD5MrWKd5do7FUnrWqGA==,type:str]
+    version: 3.13.3
